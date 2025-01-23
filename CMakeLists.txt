@@ -2,16 +2,16 @@
 # Setup project
 # ------------------------------
 
-set(EXEC_NAME "PROJECT")
+set(EXEC_NAME "GK_P4")
 set(LIB_NAME ${EXEC_NAME}Lib)
 set(TEST_NAME UnitTestTarget)
 
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.28)
 project(${EXEC_NAME} C CXX)
 
 set(PROJECT_NAME ${EXEC_NAME})
 set(PROJECT_VERSION "1.0")
-set(PROJECT_AUTHOR "Jakub Lisowski")
+set(PROJECT_AUTHOR "Michał Kwiatkowski")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 17)
@@ -27,10 +27,6 @@ add_subdirectory(deps)
 # ------------------------------
 
 add_subdirectory(src)
-
-# ------------------------------
-# Setup compile options
-# ------------------------------
 
 # ------------------------------
 # Setup compile options

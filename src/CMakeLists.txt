@@ -38,4 +38,14 @@ add_executable(${EXEC_NAME}
 # Link lib to executable
 # ------------------------------
 
-target_link_libraries(${EXEC_NAME} ${LIB_NAME})
+find_package(OpenGL REQUIRED)
+
+add_dependencies(${LIB_NAME} glad-generate-files)
+
+target_link_libraries(${LIB_NAME}  PRIVATE
+        OpenGL::GL
+        glfw
+        glad
+)
+
+target_link_libraries(${EXEC_NAME} PRIVATE ${LIB_NAME})
