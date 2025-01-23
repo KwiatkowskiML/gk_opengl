@@ -26,7 +26,7 @@ class Camera
         updateCameraVectors();
     }
 
-    glm::mat4 GetViewMatrix() { return glm::lookAt(Position, Position + Front, Up); }
+    glm::mat4 GetViewMatrix() { return lookAt(Position, Position + Front, Up); }
 
     void ProcessKeyboard(Movement direction, float deltaTime)
     {

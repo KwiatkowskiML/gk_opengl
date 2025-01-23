@@ -24,6 +24,7 @@ add_library(${LIB_NAME} STATIC
 
 target_include_directories(${LIB_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${GLAD_INCLUDE_DIR}"
 )
 
 # ------------------------------

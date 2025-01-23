@@ -6,27 +6,27 @@
 #define SHADER_H
 
 #include <fstream>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "glad/glad.h"
 
 class Shader
 {
     public:
     unsigned int ID;
 
-    Shader(const char *vertexPath, const char *fragmentPath)
+    Shader(const std::string &vertexPath, const std::string &fragmentPath)
     {
         // Read vertex/fragment shader source files
-        std::string vertexCode   = readShaderFile(vertexPath);
-        std::string fragmentCode = readShaderFile(fragmentPath);
+        const std::string vertexCode   = readShaderFile(vertexPath);
+        const std::string fragmentCode = readShaderFile(fragmentPath);
 
         // Compile shaders
-        unsigned int vertex   = compileShader(vertexCode.c_str(), GL_VERTEX_SHADER);
-        unsigned int fragment = compileShader(fragmentCode.c_str(), GL_FRAGMENT_SHADER);
+        const unsigned int vertex   = compileShader(vertexCode.c_str(), GL_VERTEX_SHADER);
+        const unsigned int fragment = compileShader(fragmentCode.c_str(), GL_FRAGMENT_SHADER);
 
         // Create shader program
         ID = glCreateProgram();
@@ -40,19 +40,19 @@ class Shader
         glDeleteShader(fragment);
     }
 
-    void use() { glUseProgram(ID); }
+    void use() const { glUseProgram(ID); }
 
-    void setBool(const std::string &name, bool value) const
+    void setBool(const std::string &name, const bool value) const
     {
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+        glUniform1i(glGetUniformLocation(ID, name.c_str()), static_cast<int>(value));
     }
 
-    void setInt(const std::string &name, int value) const
+    void setInt(const std::string &name, const int value) const
     {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
 
-    void setFloat(const std::string &name, float value) const
+    void setFloat(const std::string &name, const float value) const
     {
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
@@ -63,7 +63,7 @@ class Shader
     }
 
     private:
-    std::string readShaderFile(const char *filePath)
+    std::string readShaderFile(const std::string &filePath)
     {
         std::string shaderCode;
         std::ifstream shaderFile;
@@ -76,23 +76,23 @@ class Shader
             shaderFile.close();
             shaderCode = shaderStream.str();
         } catch (std::ifstream::failure &e) {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << '\n';
         }
         return shaderCode;
     }
 
-    unsigned int compileShader(const char *shaderCode, GLenum shaderType)
+    unsigned int compileShader(const char *shaderCode, const GLenum shaderType)
     {
-        unsigned int shader = glCreateShader(shaderType);
-        glShaderSource(shader, 1, &shaderCode, NULL);
+        const unsigned int shader = glCreateShader(shaderType);
+        glShaderSource(shader, 1, &shaderCode, nullptr);
         glCompileShader(shader);
         checkCompileErrors(shader, shaderType == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT");
         return shader;
     }
 
-    void checkCompileErrors(unsigned int shader, std::string type)
+    void checkCompileErrors(const unsigned int shader, std::string type)
     {
-        int success;
+        int success = 0;
         char infoLog[1024];
         if (type != "PROGRAM") {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
