@@ -20,9 +20,10 @@ class Renderer
 {
     public:
     // Constructor: Initializes the renderer with window dimensions, GLFW, and GLAD setup
-    Renderer(unsigned int width, unsigned int height)
-        : camera(glm::vec3(0.0f, 0.0f, 3.0f)), SCR_WIDTH(width), SCR_HEIGHT(height)
+    Renderer(unsigned int width, unsigned int height) : SCR_WIDTH(width), SCR_HEIGHT(height)
     {
+        camera = new CameraFPS(glm::vec3(0.0f, 0.0f, 3.0f));  // Create a new FPS camera
+
         initializeGLFW();                        // Initialize GLFW
         createWindow();                          // Create the window
         setupCallbacks();                        // Set up GLFW callbacks
@@ -31,7 +32,18 @@ class Renderer
     }
 
     // Destructor: Terminates GLFW when the Renderer object is destroyed
-    ~Renderer() { glfwTerminate(); }
+    ~Renderer()
+    {
+        glfwTerminate();
+        delete camera;
+    }
+
+    // Method to change camera type
+    void setCamera(Camera* newCamera)
+    {
+        delete camera;
+        camera = newCamera;
+    }
 
     // Main render loop; starts the shader, sets up vertex data, and keeps the window open until closed
     void run()
@@ -57,11 +69,11 @@ class Renderer
     GLFWwindow* getWindow() const { return window; }
 
     // Getter for the camera
-    Camera& getCamera() { return camera; }
+    Camera* getCamera() { return camera; }
 
     private:
     GLFWwindow* window;                  // The window for OpenGL rendering
-    Camera camera;                       // The camera used for scene viewing
+    Camera* camera;                      // The camera used for scene viewing
     unsigned int SCR_WIDTH, SCR_HEIGHT;  // Window dimensions
     unsigned int VAO, VBO;               // OpenGL buffer objects for the cube
 
@@ -140,13 +152,13 @@ class Renderer
 
         // Handle movement input (WASD keys)
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.ProcessKeyboard(Camera::FORWARD, deltaTime);
+            camera->ProcessKeyboard(Camera::FORWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.ProcessKeyboard(Camera::BACKWARD, deltaTime);
+            camera->ProcessKeyboard(Camera::BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.ProcessKeyboard(Camera::LEFT, deltaTime);
+            camera->ProcessKeyboard(Camera::LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.ProcessKeyboard(Camera::RIGHT, deltaTime);
+            camera->ProcessKeyboard(Camera::RIGHT, deltaTime);
     }
 
     // Render the scene (clear screen, set shader uniforms, and draw cube)
@@ -158,10 +170,11 @@ class Renderer
         shader.use();  // Use the shader program
 
         // Create transformation matrices for model, view, and projection
-        glm::mat4 model            = glm::mat4(1.0f);         // Identity matrix for model transformation
-        const glm::mat4 view       = camera.GetViewMatrix();  // Camera view matrix
+        glm::mat4 model            = glm::mat4(1.0f);          // Identity matrix for model transformation
+        const glm::mat4 view       = camera->GetViewMatrix();  // Camera view matrix
         const glm::mat4 projection = glm::perspective(
-            glm::radians(camera.GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f
+            glm::radians(camera->GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f,
+            100.0f
         );  // Projection matrix for perspective
 
         // Rotate the cube based on time
@@ -207,7 +220,7 @@ class Renderer
 
         // Retrieve the camera instance and process mouse movement to update camera orientation
         if (const auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window))) {
-            renderer->getCamera().ProcessMouseMovement(xoffset, yoffset);
+            renderer->getCamera()->ProcessMouseMovement(xoffset, yoffset);
         }
     }
 };

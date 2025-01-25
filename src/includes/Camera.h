@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+enum CameraType { FPS, CONSTANT };
+
 class Camera
 {
     public:
@@ -26,42 +28,18 @@ class Camera
         updateCameraVectors();
     }
 
-    glm::mat4 GetViewMatrix() { return lookAt(Position, Position + Front, Up); }
+    // Virtual destructor to ensure proper cleanup of derived classes
+    virtual ~Camera() = default;
 
-    void ProcessKeyboard(Movement direction, float deltaTime)
-    {
-        float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)
-            Position += Front * velocity;
-        if (direction == BACKWARD)
-            Position -= Front * velocity;
-        if (direction == LEFT)
-            Position -= Right * velocity;
-        if (direction == RIGHT)
-            Position += Right * velocity;
-    }
+    // Core camera methods
+    virtual glm::mat4 GetViewMatrix() { return glm::lookAt(Position, Position + Front, Up); }
+    float GetZoom() const { return Zoom; }
 
-    void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
-    {
-        xoffset *= MouseSensitivity;
-        yoffset *= MouseSensitivity;
+    // Virtual methods that can be overridden by derived classes
+    virtual void ProcessKeyboard(Movement /*direction*/, float /*deltaTime*/) {}
+    virtual void ProcessMouseMovement(float /*xoffset*/, float /*yoffset*/, bool /*constrainPitch*/ = true) {}
 
-        Yaw += xoffset;
-        Pitch += yoffset;
-
-        if (constrainPitch) {
-            if (Pitch > 89.0f)
-                Pitch = 89.0f;
-            if (Pitch < -89.0f)
-                Pitch = -89.0f;
-        }
-
-        updateCameraVectors();
-    }
-
-    float GetZoom() { return Zoom; }
-
-    private:
+    protected:
     void updateCameraVectors()
     {
         glm::vec3 front;
@@ -85,6 +63,85 @@ class Camera
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+};
+
+// FPS Camera - inherits from base Camera
+class CameraFPS : public Camera
+{
+    public:
+    // Constructor with default values matching the base camera
+    CameraFPS(
+        glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+        float yaw = -90.0f, float pitch = 0.0f
+    )
+        : Camera(position, up, yaw, pitch)
+    {
+    }
+
+    // Override ProcessKeyboard to implement FPS-style movement
+    void ProcessKeyboard(Movement direction, float deltaTime) override
+    {
+        float velocity = MovementSpeed * deltaTime;
+        switch (direction) {
+            case FORWARD:
+                Position += Front * velocity;
+                break;
+            case BACKWARD:
+                Position -= Front * velocity;
+                break;
+            case LEFT:
+                Position -= Right * velocity;
+                break;
+            case RIGHT:
+                Position += Right * velocity;
+                break;
+        }
+    }
+
+    // Override ProcessMouseMovement to implement mouse look
+    void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true) override
+    {
+        xoffset *= MouseSensitivity;
+        yoffset *= MouseSensitivity;
+
+        Yaw += xoffset;
+        Pitch += yoffset;
+
+        // Optional pitch constraining
+        if (constrainPitch) {
+            Pitch = glm::clamp(Pitch, -89.0f, 89.0f);
+        }
+
+        // Update camera vectors after movement
+        updateCameraVectors();
+    }
+};
+
+// Constant Camera - inherits from base Camera
+class CameraConstant : public Camera
+{
+    public:
+    // Constructor with a fixed position looking at the target
+    CameraConstant(
+        glm::vec3 position = glm::vec3(0.0f, 5.0f, 10.0f),  // Elevated and pulled back position
+        glm::vec3 target   = glm::vec3(0.0f, 0.0f, 0.0f)    // Looking at the origin of the scene
+    )
+        : Camera(position), Target(target)
+    {
+        Front = glm::normalize(Target - Position);
+        Right = glm::normalize(glm::cross(Front, WorldUp));
+        Up    = glm::normalize(glm::cross(Right, Front));
+    }
+
+    // Override methods to do nothing
+    void ProcessKeyboard(Movement /*direction*/, float /*deltaTime*/) override {}
+    void ProcessMouseMovement(float /*xoffset*/, float /*yoffset*/, bool /*constrainPitch*/ = true) override {}
+
+    // Override GetViewMatrix to always look at the target
+    glm::mat4 GetViewMatrix() override { return glm::lookAt(Position, Target, Up); }
+
+    private:
+    glm::vec3 Target;  // The point the camera is always looking at
 };
 
 #endif  // CAMERA_H
