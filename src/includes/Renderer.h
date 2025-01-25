@@ -20,6 +20,7 @@ constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
+constexpr glm::vec3 LIGHT_POS(1.2f, 1.0f, 2.0f);
 
 class Renderer
 {
@@ -66,14 +67,15 @@ class Renderer
     {
         // Shader initialization
         Shader shader(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
+        Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
 
         // Vertex data setup
         setupVertexData();
 
         // Render loop
         while (!glfwWindowShouldClose(window)) {
-            processInput();  // Handle input (e.g., keyboard)
-            render(shader);  // Render the scene
+            processInput();           // Handle input (e.g., keyboard)
+            render(lightningShader);  // Render the scene
             updateCamera();
         }
 
@@ -139,21 +141,20 @@ class Renderer
         glGenVertexArrays(1, &VAO);  // Generate Vertex Array Object
         glGenBuffers(1, &VBO);       // Generate Vertex Buffer Object
 
-        glBindVertexArray(VAO);              // Bind the Vertex Array Object
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);  // Bind the Vertex Buffer Object
-        glBufferData(
-            GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW
-        );  // Load vertex data into the buffer
+        // Bind the Vertex Buffer Object
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        // Load vertex data into the buffer
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+
+        // Bind the Vertex Array Object
+        glBindVertexArray(VAO);
 
         // Position attribute: 3 floats for the position of each vertex
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
         glEnableVertexAttribArray(0);
 
-        // Color attribute: 3 floats for the color of each vertex
-        glVertexAttribPointer(
-            1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
-            reinterpret_cast<void*>(3 * sizeof(float))
-        );  // Offset by 3 floats (position data)
+        // normal attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
     }
 
@@ -213,6 +214,9 @@ class Renderer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear the color and depth buffers
 
         shader.use();  // Use the shader program
+        shader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+        shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        shader.setVec3("lightPos", LIGHT_POS);
 
         // Create transformation matrices for model, view, and projection
         glm::mat4 model            = glm::mat4(1.0f);          // Identity matrix for model transformation
