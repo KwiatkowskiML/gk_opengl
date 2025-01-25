@@ -16,13 +16,18 @@
 #include "Constants.h"
 #include "Shader.h"
 
+constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
+constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
+constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
+constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
+
 class Renderer
 {
     public:
     // Constructor: Initializes the renderer with window dimensions, GLFW, and GLAD setup
     Renderer(unsigned int width, unsigned int height) : SCR_WIDTH(width), SCR_HEIGHT(height)
     {
-        camera = new CameraFPS(glm::vec3(0.0f, 0.0f, 3.0f));  // Create a new FPS camera
+        camera = new CameraFPS(INITIAL_FPS_CAMERA_POSITION);  // Create a new FPS camera
 
         initializeGLFW();                        // Initialize GLFW
         createWindow();                          // Create the window
@@ -45,6 +50,17 @@ class Renderer
         camera = newCamera;
     }
 
+    void updateCamera()
+    {
+        float currentFrame     = glfwGetTime();             // Get current frame time
+        static float lastFrame = 0.0f;                      // Track last frame time
+        float deltaTime        = currentFrame - lastFrame;  // Calculate time difference between frames
+        lastFrame              = currentFrame;              // Update last frame time
+
+        if (cameraType == CameraType::CIRCULAR)
+            camera->Update(deltaTime);
+    }
+
     // Main render loop; starts the shader, sets up vertex data, and keeps the window open until closed
     void run()
     {
@@ -58,6 +74,7 @@ class Renderer
         while (!glfwWindowShouldClose(window)) {
             processInput();  // Handle input (e.g., keyboard)
             render(shader);  // Render the scene
+            updateCamera();
         }
 
         // Cleanup resources after the loop ends
@@ -76,6 +93,7 @@ class Renderer
     Camera* camera;                      // The camera used for scene viewing
     unsigned int SCR_WIDTH, SCR_HEIGHT;  // Window dimensions
     unsigned int VAO, VBO;               // OpenGL buffer objects for the cube
+    CameraType cameraType = CameraType::FPS;
 
     // GLFW setup: Initializes GLFW and sets OpenGL version
     void initializeGLFW()
@@ -159,6 +177,33 @@ class Renderer
             camera->ProcessKeyboard(Camera::LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera->ProcessKeyboard(Camera::RIGHT, deltaTime);
+
+        // Handle menu input for camera type
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+            if (cameraType != CameraType::FPS) {
+                std::cout << "Switching to FPS Camera\n";
+                setCamera(new CameraFPS(INITIAL_FPS_CAMERA_POSITION));
+                cameraType = CameraType::FPS;
+            }
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+            if (cameraType != CameraType::CONSTANT) {
+                std::cout << "Switching to Constant Camera\n";
+                setCamera(new CameraConstant(INITIAL_CONSTANT_CAMERA_POSITION, CAMERA_TARGET_POSITION)
+                );  // Replace with your constant camera class if defined
+                cameraType = CameraType::CONSTANT;
+            }
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+            if (cameraType != CameraType::CIRCULAR) {
+                std::cout << "Switching to Circular Camera\n";
+                setCamera(new CameraCircular(CAMERA_TARGET_POSITION)
+                );  // Replace with your circular camera class if defined
+                cameraType = CameraType::CIRCULAR;
+            }
+        }
     }
 
     // Render the scene (clear screen, set shader uniforms, and draw cube)
