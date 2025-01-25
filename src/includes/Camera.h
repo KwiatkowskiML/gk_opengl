@@ -13,6 +13,7 @@ enum CameraType { FPS, CONSTANT, CIRCULAR };
 class Camera
 {
     public:
+    glm::vec3 Position;
     enum Movement { FORWARD, BACKWARD, LEFT, RIGHT };
 
     Camera(
@@ -53,7 +54,6 @@ class Camera
         Up    = glm::normalize(glm::cross(Right, Front));
     }
 
-    glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
