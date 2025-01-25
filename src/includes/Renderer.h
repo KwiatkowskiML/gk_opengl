@@ -219,6 +219,12 @@ class Renderer
         shader.setVec3("lightPos", LIGHT_POS);
         shader.setVec3("viewPos", camera->Position);
 
+        // constant cube
+        glm::mat4 model1 = glm::mat4(1.0f);
+        model1           = glm::translate(model1, glm::vec3(2.0f, 0.0f, 0.0f));
+        shader.setMat4("model", model1);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // Create transformation matrices for model, view, and projection
         glm::mat4 model            = glm::mat4(1.0f);          // Identity matrix for model transformation
         const glm::mat4 view       = camera->GetViewMatrix();  // Camera view matrix
