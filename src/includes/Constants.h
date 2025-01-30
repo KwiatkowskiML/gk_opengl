@@ -7,10 +7,6 @@
 
 #include <string>
 
-const std::string VERTEX_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/vertex_shader.glsl";
-const std::string FRAGMENT_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/fragment_shader.glsl";
 const std::string LIGHTNING_VERTEX_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_vertex_shader.glsl";
 const std::string LIGHTNING_FRAGMENT_SHADER_PATH =

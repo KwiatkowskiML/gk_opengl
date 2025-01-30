@@ -12,7 +12,9 @@
 #include <stdexcept>
 // clang-format on
 
-#include "Camera.h"
+#include "Cameras/Camera.h"
+#include "Cameras/CameraConstant.h"
+#include "Cameras/CameraFPS.h"
 #include "Constants.h"
 #include "Shader.h"
 
@@ -66,7 +68,6 @@ class Renderer
     void run()
     {
         // Shader initialization
-        Shader shader(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
         Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
 
         // Vertex data setup
@@ -91,10 +92,19 @@ class Renderer
     Camera* getCamera() { return camera; }
 
     private:
-    GLFWwindow* window;                  // The window for OpenGL rendering
-    Camera* camera;                      // The camera used for scene viewing
-    unsigned int SCR_WIDTH, SCR_HEIGHT;  // Window dimensions
-    unsigned int VAO, VBO;               // OpenGL buffer objects for the cube
+    // The window for OpenGL rendering
+    GLFWwindow* window;
+
+    // The camera used for scene viewing
+    Camera* camera;
+
+    // Window dimensions
+    unsigned int SCR_WIDTH, SCR_HEIGHT;
+
+    // OpenGL buffer objects for the cube
+    unsigned int VAO, VBO;
+
+    // CameraType enum to keep track of the current camera type
     CameraType cameraType = CameraType::FPS;
 
     // GLFW setup: Initializes GLFW and sets OpenGL version

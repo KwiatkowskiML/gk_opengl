@@ -2,10 +2,12 @@
 # Find all source files
 # ------------------------------
 
-file(GLOB LIB_SOURCES
+file(GLOB_RECURSE LIB_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
 )
+
+message(STATUS "LIB_SOURCES=${LIB_SOURCES}")
 
 # Ensure main.cpp removed from lib sources
 list(REMOVE_ITEM LIB_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
