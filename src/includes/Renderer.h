@@ -13,6 +13,7 @@
 // clang-format on
 
 #include "Cameras/Camera.h"
+#include "Cameras/CameraCircular.h"
 #include "Cameras/CameraConstant.h"
 #include "Cameras/CameraFPS.h"
 #include "Constants.h"

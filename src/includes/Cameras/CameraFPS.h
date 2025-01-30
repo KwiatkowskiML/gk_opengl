@@ -14,10 +14,7 @@ class CameraFPS : public Camera
     CameraFPS(
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
         float yaw = -90.0f, float pitch = 0.0f
-    )
-        : Camera(position, up, yaw, pitch)
-    {
-    }
+    );
 
     // Override ProcessKeyboard to implement FPS-style movement
     void ProcessKeyboard(Movement direction, float deltaTime) override;

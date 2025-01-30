@@ -4,6 +4,8 @@
 
 #include "../includes/Cameras/CameraFPS.h"
 
+CameraFPS::CameraFPS(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Camera(position, up, yaw, pitch) {}
+
 void CameraFPS::ProcessKeyboard(Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;

@@ -11,13 +11,7 @@ class CameraConstant : public Camera
 {
     public:
     // Constructor with a fixed position looking at the target
-    CameraConstant(glm::vec3 position = glm::vec3(0.0f, 5.0f, 10.0f), glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f))
-        : Camera(position), Target(target)
-    {
-        Front = glm::normalize(Target - Position);
-        Right = glm::normalize(glm::cross(Front, WorldUp));
-        Up    = glm::normalize(glm::cross(Right, Front));
-    }
+    CameraConstant(glm::vec3 position = glm::vec3(0.0f, 5.0f, 10.0f), glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f));
 
     // Override methods to do nothing
     void ProcessKeyboard(Movement /*direction*/, float /*deltaTime*/) override {}
