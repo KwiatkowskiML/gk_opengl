@@ -8,6 +8,7 @@ Renderer::Renderer(unsigned int width, unsigned int height) : SCR_WIDTH(width), 
 {
     camera = new CameraFPS(INITIAL_FPS_CAMERA_POSITION);  // Create a new FPS camera
 
+    setupLightSource();                      // Set up the light source
     initializeGLFW();                        // Initialize GLFW
     createWindow();                          // Create the window
     setupCallbacks();                        // Set up GLFW callbacks
@@ -44,8 +45,8 @@ void Renderer::run()
 
     // Render loop
     while (!glfwWindowShouldClose(window)) {
-        processInput();           // Handle input (e.g., keyboard)
-        render(lightningShader);  // Render the scene
+        processInput();
+        render(lightningShader);
         updateCamera();
     }
 
@@ -155,27 +156,33 @@ void Renderer::processInput()
 }
 void Renderer::render(Shader &shader) const
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);                // Set the background color
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear the color and depth buffers
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shader.use();  // Use the shader program
+    shader.use();
+    shader.setVec3("light.position", lightSource.position);
+    shader.setVec3("light.color", lightSource.color);
+    shader.setFloat("light.constant", lightSource.constant);
+    shader.setFloat("light.linear", lightSource.linear);
+    shader.setFloat("light.quadratic", lightSource.quadratic);
+
     shader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-    shader.setVec3("lightPos", LIGHT_POS);
+    shader.setFloat("phongProperties.ambientStrength", 0.1f);
+    shader.setFloat("phongProperties.shininess", 32.0f);
+    shader.setFloat("phongProperties.specularStrength", 0.5f);
 
     // constant cube
     glm::mat4 model1 = glm::mat4(1.0f);
-    model1           = glm::translate(model1, glm::vec3(2.0f, 0.0f, 0.0f));
+    model1           = glm::translate(model1, glm::vec3(-10.0f, 0.0f, 0.0f));
     shader.setMat4("model", model1);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Create transformation matrices for model, view, and projection
-    glm::mat4 model            = glm::mat4(1.0f);          // Identity matrix for model transformation
-    const glm::mat4 view       = camera->GetViewMatrix();  // Camera view matrix
+    glm::mat4 model            = glm::mat4(1.0f);
+    const glm::mat4 view       = camera->GetViewMatrix();
     const glm::mat4 projection = glm::perspective(
-        glm::radians(camera->GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f,
-        100.0f
-    );  // Projection matrix for perspective
+        glm::radians(camera->GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f
+    );
 
     // Rotate the cube based on time
     model = glm::rotate(model, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -187,23 +194,23 @@ void Renderer::render(Shader &shader) const
 
     // Draw the cube using the vertex data
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);  // Draw 36 vertices (for the cube)
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glfwSwapBuffers(window);  // Swap the front and back buffers
-    glfwPollEvents();         // Poll for events (like input)
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 void Renderer::framebuffer_size_callback(GLFWwindow *, const int width, const int height)
 {
-    glViewport(0, 0, width, height);  // Set the OpenGL viewport to match the new window size
+    glViewport(0, 0, width, height);
 }
 void Renderer::mouse_callback(GLFWwindow *window, const double xpos, const double ypos)
 {
-    static bool firstMouse = true;  // Flag to handle the first mouse movement
+    static bool firstMouse = true;
     static float lastX     = WINDOW_WIDTH / 2.0f;
     static float lastY     = WINDOW_HEIGHT / 2.0f;
 
     if (firstMouse) {
-        lastX      = xpos;  // Set initial mouse position
+        lastX      = xpos;
         lastY      = ypos;
         firstMouse = false;
     }
@@ -218,4 +225,12 @@ void Renderer::mouse_callback(GLFWwindow *window, const double xpos, const doubl
     if (const auto renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window))) {
         renderer->getCamera()->ProcessMouseMovement(xoffset, yoffset);
     }
+}
+void Renderer::setupLightSource()
+{
+    lightSource.position  = LIGHT_POS;
+    lightSource.color     = glm::vec3(1.0f, 1.0f, 1.0f);
+    lightSource.constant  = 1.0f;
+    lightSource.linear    = 0.09f;
+    lightSource.quadratic = 0.032f;
 }

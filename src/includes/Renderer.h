@@ -17,6 +17,7 @@
 #include "Cameras/CameraConstant.h"
 #include "Cameras/CameraFPS.h"
 #include "Constants.h"
+#include "LightSource.h"
 #include "Shader.h"
 
 // Initial camera positions for different camera types
@@ -24,7 +25,7 @@ constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
-constexpr glm::vec3 LIGHT_POS(1.2f, 1.0f, 2.0f);
+constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
 
 class Renderer
 {
@@ -59,6 +60,7 @@ class Renderer
     //-----------------------------------------------------------------------------------
     GLFWwindow* window;
     Camera* camera;
+    LightSource lightSource;
     unsigned int SCR_WIDTH, SCR_HEIGHT;
     unsigned int VAO, VBO;
     CameraType cameraType = CameraType::FPS;
@@ -94,6 +96,11 @@ class Renderer
     //-----------------------------------------------------------------------------------
     static void framebuffer_size_callback(GLFWwindow* /*window*/, const int width, const int height);
     static void mouse_callback(GLFWwindow* window, const double xpos, const double ypos);
+
+    //-----------------------------------------------------------------------------------
+    // Light source setup
+    //-----------------------------------------------------------------------------------
+    void setupLightSource();
 };
 
 #endif  // RENDERER_H
