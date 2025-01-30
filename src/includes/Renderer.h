@@ -19,6 +19,9 @@
 #include "Constants.h"
 #include "LightSource.h"
 #include "Shader.h"
+#include "WindowManager.h"
+
+#include <memory>
 
 // Initial camera positions for different camera types
 constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
@@ -35,6 +38,12 @@ class Renderer
     //-----------------------------------------------------------------------------------
     Renderer(unsigned int width, unsigned int height);
     ~Renderer();
+
+    //-----------------------------------------------------------------------------------
+    // GLFW callback functions
+    //-----------------------------------------------------------------------------------
+    // static void framebuffer_size_callback(GLFWwindow* /*window*/, const int width, const int height);
+    // static void mouse_callback(GLFWwindow* window, const double xpos, const double ypos);
 
     //-----------------------------------------------------------------------------------
     // Camera management
@@ -58,7 +67,8 @@ class Renderer
     //-----------------------------------------------------------------------------------
     // Private members
     //-----------------------------------------------------------------------------------
-    GLFWwindow* window;
+    std::unique_ptr<WindowManager> windowManager;
+    // GLFWwindow* window;
     Camera* camera;
     LightSource lightSource;
     unsigned int SCR_WIDTH, SCR_HEIGHT;
@@ -70,16 +80,16 @@ class Renderer
     //-----------------------------------------------------------------------------------
 
     // GLFW setup: Initializes GLFW and sets OpenGL version
-    void initializeGLFW();
-
-    // Create a window with the specified dimensions and check for errors
-    void createWindow();
-
-    // Set up GLFW callbacks for framebuffer size and mouse movement
+    // void initializeGLFW();
+    //
+    // // Create a window with the specified dimensions and check for errors
+    // void createWindow();
+    //
+    // // Set up GLFW callbacks for framebuffer size and mouse movement
     void setupCallbacks() const;
-
-    // Initialize GLAD to load OpenGL function pointers
-    void initializeGLAD();
+    //
+    // // Initialize GLAD to load OpenGL function pointers
+    // void initializeGLAD();
 
     //-----------------------------------------------------------------------------------
     // Data Setup
@@ -90,12 +100,6 @@ class Renderer
     // Input processing
     //-----------------------------------------------------------------------------------
     void processInput();
-
-    //-----------------------------------------------------------------------------------
-    // GLFW callback functions
-    //-----------------------------------------------------------------------------------
-    static void framebuffer_size_callback(GLFWwindow* /*window*/, const int width, const int height);
-    static void mouse_callback(GLFWwindow* window, const double xpos, const double ypos);
 
     //-----------------------------------------------------------------------------------
     // Light source setup

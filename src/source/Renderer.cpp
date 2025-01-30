@@ -4,16 +4,17 @@
 
 #include "includes/Renderer.h"
 
-Renderer::Renderer(unsigned int width, unsigned int height) : SCR_WIDTH(width), SCR_HEIGHT(height)
+Renderer::Renderer(unsigned int width, unsigned int height)
+    : SCR_WIDTH(width), SCR_HEIGHT(height), windowManager(std::make_unique<WindowManager>(width, height))
 {
     camera = new CameraFPS(INITIAL_FPS_CAMERA_POSITION);  // Create a new FPS camera
 
-    setupLightSource();                      // Set up the light source
-    initializeGLFW();                        // Initialize GLFW
-    createWindow();                          // Create the window
-    setupCallbacks();                        // Set up GLFW callbacks
-    initializeGLAD();                        // Initialize GLAD for OpenGL function loading
-    glfwSetWindowUserPointer(window, this);  // Set the window user pointer to this Renderer instance
+    setupLightSource();  // Set up the light source
+    // initializeGLFW();                        // Initialize GLFW
+    // createWindow();                          // Create the window
+    // setupCallbacks();                        // Set up GLFW callbacks
+    // initializeGLAD();                        // Initialize GLAD for OpenGL function loading
+    // glfwSetWindowUserPointer(window, this);  // Set the window user pointer to this Renderer instance
 }
 Renderer::~Renderer()
 {
@@ -44,7 +45,7 @@ void Renderer::run()
     setupVertexData();
 
     // Render loop
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(windowManager->getWindow())) {
         processInput();
         render(lightningShader);
         updateCamera();
@@ -54,38 +55,17 @@ void Renderer::run()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
-GLFWwindow *Renderer::getWindow() const { return window; }
+GLFWwindow *Renderer::getWindow() const { return windowManager->getWindow(); }
 Camera *Renderer::getCamera() const { return camera; }
-void Renderer::initializeGLFW()
-{
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);                  // Set OpenGL version 3.x
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);                  // Set OpenGL version 3.3
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // Use core profile
-}
-void Renderer::createWindow()
-{
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "3D Scene", nullptr, nullptr);
-    if (window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();  // Clean up GLFW
-        throw std::runtime_error("Window creation failed");
-    }
-    glfwMakeContextCurrent(window);  // Make the context current for the window
-}
-void Renderer::setupCallbacks() const
-{
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  // Set resize callback
-    glfwSetCursorPosCallback(window, mouse_callback);                   // Set mouse position callback
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);        // Disable cursor
-}
-void Renderer::initializeGLAD()
-{
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-        throw std::runtime_error("Failed to initialize GLAD");
-    }
-    glEnable(GL_DEPTH_TEST);  // Enable depth testing for 3D rendering
-}
+
+// void Renderer::setupCallbacks() const
+// {
+//     glfwSetFramebufferSizeCallback(windowManager->getWindow(), framebuffer_size_callback);  // Set resize callback
+//     glfwSetCursorPosCallback(windowManager->getWindow(), mouse_callback);                   // Set mouse position
+//     callback glfwSetInputMode(windowManager->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);        // Disable
+//     cursor
+// }
+
 void Renderer::setupVertexData()
 {
     glGenVertexArrays(1, &VAO);  // Generate Vertex Array Object
@@ -109,8 +89,9 @@ void Renderer::setupVertexData()
 }
 void Renderer::processInput()
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)  // Close the window if Escape key is pressed
-        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_ESCAPE) ==
+        GLFW_PRESS)  // Close the window if Escape key is pressed
+        glfwSetWindowShouldClose(windowManager->getWindow(), true);
 
     float currentFrame     = glfwGetTime();             // Get current frame time
     static float lastFrame = 0.0f;                      // Track last frame time
@@ -118,17 +99,17 @@ void Renderer::processInput()
     lastFrame              = currentFrame;              // Update last frame time
 
     // Handle movement input (WASD keys)
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
         camera->ProcessKeyboard(Camera::FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
         camera->ProcessKeyboard(Camera::BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_A) == GLFW_PRESS)
         camera->ProcessKeyboard(Camera::LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
         camera->ProcessKeyboard(Camera::RIGHT, deltaTime);
 
     // Handle menu input for camera type
-    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_1) == GLFW_PRESS) {
         if (cameraType != CameraType::FPS) {
             std::cout << "Switching to FPS Camera\n";
             setCamera(new CameraFPS(INITIAL_FPS_CAMERA_POSITION));
@@ -136,7 +117,7 @@ void Renderer::processInput()
         }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_2) == GLFW_PRESS) {
         if (cameraType != CameraType::CONSTANT) {
             std::cout << "Switching to Constant Camera\n";
             setCamera(new CameraConstant(INITIAL_CONSTANT_CAMERA_POSITION, CAMERA_TARGET_POSITION)
@@ -145,7 +126,7 @@ void Renderer::processInput()
         }
     }
 
-    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS) {
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_3) == GLFW_PRESS) {
         if (cameraType != CameraType::CIRCULAR) {
             std::cout << "Switching to Circular Camera\n";
             setCamera(new CameraCircular(CAMERA_TARGET_POSITION)
@@ -196,36 +177,10 @@ void Renderer::render(Shader &shader) const
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
 }
-void Renderer::framebuffer_size_callback(GLFWwindow *, const int width, const int height)
-{
-    glViewport(0, 0, width, height);
-}
-void Renderer::mouse_callback(GLFWwindow *window, const double xpos, const double ypos)
-{
-    static bool firstMouse = true;
-    static float lastX     = WINDOW_WIDTH / 2.0f;
-    static float lastY     = WINDOW_HEIGHT / 2.0f;
 
-    if (firstMouse) {
-        lastX      = xpos;
-        lastY      = ypos;
-        firstMouse = false;
-    }
-
-    // Calculate mouse movement offsets
-    float const xoffset = xpos - lastX;
-    float const yoffset = lastY - ypos;
-    lastX               = xpos;
-    lastY               = ypos;
-
-    // Retrieve the camera instance and process mouse movement to update camera orientation
-    if (const auto renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window))) {
-        renderer->getCamera()->ProcessMouseMovement(xoffset, yoffset);
-    }
-}
 void Renderer::setupLightSource()
 {
     lightSource.position  = LIGHT_POS;
