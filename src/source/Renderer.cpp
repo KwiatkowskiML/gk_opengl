@@ -162,7 +162,6 @@ void Renderer::render(Shader &shader) const
     shader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
     shader.setVec3("lightPos", LIGHT_POS);
-    shader.setVec3("viewPos", camera->Position);
 
     // constant cube
     glm::mat4 model1 = glm::mat4(1.0f);
