@@ -8,13 +8,10 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     : SCR_WIDTH(width), SCR_HEIGHT(height), windowManager(std::make_unique<WindowManager>(width, height))
 {
     camera = new CameraFPS(INITIAL_FPS_CAMERA_POSITION);  // Create a new FPS camera
-
-    setupLightSource();  // Set up the light source
-    // initializeGLFW();                        // Initialize GLFW
-    // createWindow();                          // Create the window
-    // setupCallbacks();                        // Set up GLFW callbacks
-    // initializeGLAD();                        // Initialize GLAD for OpenGL function loading
-    // glfwSetWindowUserPointer(window, this);  // Set the window user pointer to this Renderer instance
+    setupLightSource();                                   // Set up the light source
+    glfwSetWindowUserPointer(
+        windowManager->getWindow(), this
+    );  // Set the window user pointer to this Renderer instance
 }
 Renderer::~Renderer()
 {
@@ -57,14 +54,6 @@ void Renderer::run()
 }
 GLFWwindow *Renderer::getWindow() const { return windowManager->getWindow(); }
 Camera *Renderer::getCamera() const { return camera; }
-
-// void Renderer::setupCallbacks() const
-// {
-//     glfwSetFramebufferSizeCallback(windowManager->getWindow(), framebuffer_size_callback);  // Set resize callback
-//     glfwSetCursorPosCallback(windowManager->getWindow(), mouse_callback);                   // Set mouse position
-//     callback glfwSetInputMode(windowManager->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);        // Disable
-//     cursor
-// }
 
 void Renderer::setupVertexData()
 {

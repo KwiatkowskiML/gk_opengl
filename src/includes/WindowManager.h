@@ -30,6 +30,7 @@ class WindowManager
     // Initialize GLAD to load OpenGL function pointers
     void initializeGLAD();
 
+    // Callbacks
     static void framebuffer_size_callback(GLFWwindow* /*window*/, const int width, const int height);
     static void mouse_callback(GLFWwindow* window, const double xpos, const double ypos);
 };

@@ -5,17 +5,16 @@
 #include <glad/glad.h>
 #include <iostream>
 
-#include "includes/WindowManager.h"
-
 #include <includes/Renderer.h>
+#include "includes/Constants.h"
+#include "includes/WindowManager.h"
 
 WindowManager::WindowManager(unsigned int width, unsigned int height) : width(width), height(height)
 {
-    initializeGLFW();                        // Initialize GLFW
-    createWindow();                          // Create the window
-    setupCallbacks();                        // Set up GLFW callbacks
-    initializeGLAD();                        // Initialize GLAD for OpenGL function loading
-    glfwSetWindowUserPointer(window, this);  // Set the window user pointer to this Renderer instance
+    initializeGLFW();  // Initialize GLFW
+    createWindow();    // Create the window
+    setupCallbacks();  // Set up GLFW callbacks
+    initializeGLAD();  // Initialize GLAD for OpenGL function loading
 }
 WindowManager::~WindowManager() { glfwTerminate(); }
 

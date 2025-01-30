@@ -40,12 +40,6 @@ class Renderer
     ~Renderer();
 
     //-----------------------------------------------------------------------------------
-    // GLFW callback functions
-    //-----------------------------------------------------------------------------------
-    // static void framebuffer_size_callback(GLFWwindow* /*window*/, const int width, const int height);
-    // static void mouse_callback(GLFWwindow* window, const double xpos, const double ypos);
-
-    //-----------------------------------------------------------------------------------
     // Camera management
     //-----------------------------------------------------------------------------------
     void setCamera(Camera* newCamera);
@@ -74,22 +68,6 @@ class Renderer
     unsigned int SCR_WIDTH, SCR_HEIGHT;
     unsigned int VAO, VBO;
     CameraType cameraType = CameraType::FPS;
-
-    //-----------------------------------------------------------------------------------
-    // OpenGL and GLFW initialization functions
-    //-----------------------------------------------------------------------------------
-
-    // GLFW setup: Initializes GLFW and sets OpenGL version
-    // void initializeGLFW();
-    //
-    // // Create a window with the specified dimensions and check for errors
-    // void createWindow();
-    //
-    // // Set up GLFW callbacks for framebuffer size and mouse movement
-    void setupCallbacks() const;
-    //
-    // // Initialize GLAD to load OpenGL function pointers
-    // void initializeGLAD();
 
     //-----------------------------------------------------------------------------------
     // Data Setup
