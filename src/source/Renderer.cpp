@@ -5,34 +5,16 @@
 #include "includes/Renderer.h"
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : SCR_WIDTH(width), SCR_HEIGHT(height), windowManager(std::make_unique<WindowManager>(width, height))
+    : windowManager(std::make_unique<WindowManager>(width, height)), windowWidth(width), windowHeight(height)
 {
-    camera = new CameraFPS(INITIAL_FPS_CAMERA_POSITION);  // Create a new FPS camera
-    setupLightSource();                                   // Set up the light source
+    setupLightSource();
     glfwSetWindowUserPointer(
         windowManager->getWindow(), this
     );  // Set the window user pointer to this Renderer instance
 }
-Renderer::~Renderer()
-{
-    glfwTerminate();
-    delete camera;
-}
-void Renderer::setCamera(Camera *newCamera)
-{
-    delete camera;
-    camera = newCamera;
-}
-void Renderer::updateCamera() const
-{
-    float currentFrame     = glfwGetTime();             // Get current frame time
-    static float lastFrame = 0.0f;                      // Track last frame time
-    float deltaTime        = currentFrame - lastFrame;  // Calculate time difference between frames
-    lastFrame              = currentFrame;              // Update last frame time
 
-    if (cameraType == CameraType::CIRCULAR)
-        camera->Update(deltaTime);
-}
+Renderer::~Renderer() { glfwTerminate(); }
+
 void Renderer::run()
 {
     // Shader initialization
@@ -41,11 +23,21 @@ void Renderer::run()
     // Vertex data setup
     setupVertexData();
 
+    float currentFrame = glfwGetTime();             // Get current frame time
+    float lastFrame    = 0.0f;                      // Track last frame time
+    float deltaTime    = currentFrame - lastFrame;  // Calculate time difference between frames
+    lastFrame          = currentFrame;              // Update last frame time
+
     // Render loop
     while (!glfwWindowShouldClose(windowManager->getWindow())) {
-        processInput();
+        // Calculate time difference
+        currentFrame = glfwGetTime();
+        deltaTime    = currentFrame - lastFrame;
+        lastFrame    = currentFrame;
+
+        processInput(deltaTime);
         render(lightningShader);
-        updateCamera();
+        cameraManager.updateCamera(deltaTime);
     }
 
     // Cleanup resources after the loop ends
@@ -53,7 +45,7 @@ void Renderer::run()
     glDeleteBuffers(1, &VBO);
 }
 GLFWwindow *Renderer::getWindow() const { return windowManager->getWindow(); }
-Camera *Renderer::getCamera() const { return camera; }
+Camera *Renderer::getCamera() const { return cameraManager.getActiveCamera(); }
 
 void Renderer::setupVertexData()
 {
@@ -76,51 +68,41 @@ void Renderer::setupVertexData()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 }
-void Renderer::processInput()
+void Renderer::processInput(float deltaTime)
 {
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_ESCAPE) ==
         GLFW_PRESS)  // Close the window if Escape key is pressed
         glfwSetWindowShouldClose(windowManager->getWindow(), true);
 
-    float currentFrame     = glfwGetTime();             // Get current frame time
-    static float lastFrame = 0.0f;                      // Track last frame time
-    float deltaTime        = currentFrame - lastFrame;  // Calculate time difference between frames
-    lastFrame              = currentFrame;              // Update last frame time
-
     // Handle movement input (WASD keys)
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
-        camera->ProcessKeyboard(Camera::FORWARD, deltaTime);
+        cameraManager.processKeyboardInput(Camera::FORWARD, deltaTime);
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_S) == GLFW_PRESS)
-        camera->ProcessKeyboard(Camera::BACKWARD, deltaTime);
+        cameraManager.processKeyboardInput(Camera::BACKWARD, deltaTime);
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_A) == GLFW_PRESS)
-        camera->ProcessKeyboard(Camera::LEFT, deltaTime);
+        cameraManager.processKeyboardInput(Camera::LEFT, deltaTime);
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
-        camera->ProcessKeyboard(Camera::RIGHT, deltaTime);
+        cameraManager.processKeyboardInput(Camera::RIGHT, deltaTime);
 
     // Handle menu input for camera type
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_1) == GLFW_PRESS) {
-        if (cameraType != CameraType::FPS) {
+        if (cameraManager.getCurrentType() != FPS) {
             std::cout << "Switching to FPS Camera\n";
-            setCamera(new CameraFPS(INITIAL_FPS_CAMERA_POSITION));
-            cameraType = CameraType::FPS;
+            cameraManager.switchCamera(FPS);
         }
     }
 
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_2) == GLFW_PRESS) {
-        if (cameraType != CameraType::CONSTANT) {
+        if (cameraManager.getCurrentType() != CONSTANT) {
             std::cout << "Switching to Constant Camera\n";
-            setCamera(new CameraConstant(INITIAL_CONSTANT_CAMERA_POSITION, CAMERA_TARGET_POSITION)
-            );  // Replace with your constant camera class if defined
-            cameraType = CameraType::CONSTANT;
+            cameraManager.switchCamera(CONSTANT);
         }
     }
 
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_3) == GLFW_PRESS) {
-        if (cameraType != CameraType::CIRCULAR) {
+        if (cameraManager.getCurrentType() != CIRCULAR) {
             std::cout << "Switching to Circular Camera\n";
-            setCamera(new CameraCircular(CAMERA_TARGET_POSITION)
-            );  // Replace with your circular camera class if defined
-            cameraType = CameraType::CIRCULAR;
+            cameraManager.switchCamera(CIRCULAR);
         }
     }
 }
@@ -149,9 +131,10 @@ void Renderer::render(Shader &shader) const
 
     // Create transformation matrices for model, view, and projection
     glm::mat4 model            = glm::mat4(1.0f);
-    const glm::mat4 view       = camera->GetViewMatrix();
+    const glm::mat4 view       = cameraManager.getViewMatrix();
     const glm::mat4 projection = glm::perspective(
-        glm::radians(camera->GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f
+        glm::radians(cameraManager.getZoom()), static_cast<float>(windowWidth) / static_cast<float>(windowHeight), 0.1f,
+        100.0f
     );
 
     // Rotate the cube based on time

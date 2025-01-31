@@ -12,6 +12,8 @@
 #include <stdexcept>
 // clang-format on
 
+#include <memory>
+#include "CameraManager.h"
 #include "Cameras/Camera.h"
 #include "Cameras/CameraCircular.h"
 #include "Cameras/CameraConstant.h"
@@ -21,15 +23,6 @@
 #include "Shader.h"
 #include "WindowManager.h"
 
-#include <memory>
-
-// Initial camera positions for different camera types
-constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
-constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
-constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
-constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
-constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
-
 class Renderer
 {
     public:
@@ -38,12 +31,6 @@ class Renderer
     //-----------------------------------------------------------------------------------
     Renderer(unsigned int width, unsigned int height);
     ~Renderer();
-
-    //-----------------------------------------------------------------------------------
-    // Camera management
-    //-----------------------------------------------------------------------------------
-    void setCamera(Camera* newCamera);
-    void updateCamera() const;
 
     //-----------------------------------------------------------------------------------
     // Rendering and execution
@@ -62,12 +49,10 @@ class Renderer
     // Private members
     //-----------------------------------------------------------------------------------
     std::unique_ptr<WindowManager> windowManager;
-    // GLFWwindow* window;
-    Camera* camera;
+    CameraManager cameraManager;
     LightSource lightSource;
-    unsigned int SCR_WIDTH, SCR_HEIGHT;
+    unsigned int windowWidth, windowHeight;
     unsigned int VAO, VBO;
-    CameraType cameraType = CameraType::FPS;
 
     //-----------------------------------------------------------------------------------
     // Data Setup
@@ -77,7 +62,7 @@ class Renderer
     //-----------------------------------------------------------------------------------
     // Input processing
     //-----------------------------------------------------------------------------------
-    void processInput();
+    void processInput(float deltaTime);
 
     //-----------------------------------------------------------------------------------
     // Light source setup
