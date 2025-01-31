@@ -8,7 +8,9 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-struct Model {
+class Model
+{
+    public:
     unsigned int VAO;
     unsigned int VBO;
     std::vector<float> vertices;

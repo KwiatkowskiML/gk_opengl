@@ -73,6 +73,9 @@ constexpr float pyramidVertices[] = {
 constexpr int WINDOW_WIDTH  = 800;
 constexpr int WINDOW_HEIGHT = 600;
 
+constexpr unsigned int SPHERE_SECTORS = 36;  // longitude
+constexpr unsigned int SPHERE_STACKS  = 18;  // latitude
+
 constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);

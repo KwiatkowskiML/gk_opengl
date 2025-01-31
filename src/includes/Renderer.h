@@ -70,6 +70,7 @@ class Renderer
     // Add model
     //-----------------------------------------------------------------------------------
     void addCube(const glm::vec3& position, const glm::vec3& color);
+    void addSphere(const glm::vec3& position, const glm::vec3& color, float radius);
 };
 
 #endif  // RENDERER_H
