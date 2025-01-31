@@ -13,6 +13,7 @@
 // clang-format on
 
 #include <memory>
+#include <vector>
 #include "CameraManager.h"
 #include "Cameras/Camera.h"
 #include "Cameras/CameraCircular.h"
@@ -20,6 +21,7 @@
 #include "Cameras/CameraFPS.h"
 #include "Constants.h"
 #include "LightSource.h"
+#include "Model.h"
 #include "Shader.h"
 #include "WindowManager.h"
 
@@ -52,12 +54,7 @@ class Renderer
     CameraManager cameraManager;
     LightSource lightSource;
     unsigned int windowWidth, windowHeight;
-    unsigned int VAO, VBO;
-
-    //-----------------------------------------------------------------------------------
-    // Data Setup
-    //-----------------------------------------------------------------------------------
-    void setupVertexData();
+    std::vector<Model> models;
 
     //-----------------------------------------------------------------------------------
     // Input processing
@@ -68,6 +65,11 @@ class Renderer
     // Light source setup
     //-----------------------------------------------------------------------------------
     void setupLightSource();
+
+    //-----------------------------------------------------------------------------------
+    // Add model
+    //-----------------------------------------------------------------------------------
+    void addCube(const glm::vec3& position, const glm::vec3& color);
 };
 
 #endif  // RENDERER_H

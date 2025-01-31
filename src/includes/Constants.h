@@ -39,6 +39,37 @@ constexpr float cubeVertices[] = {
     -0.5f, 0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f
 };
 
+constexpr float pyramidVertices[] = {
+    // Base (square face) - counterclockwise winding for correct normal direction
+    // positions          // normal vectors
+    -0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f,  // bottom left
+    0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f,   // bottom right
+    0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f,    // top right
+    0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f,    // top right
+    -0.5f, 0.0f, 0.5f, 0.0f, -1.0f, 0.0f,   // top left
+    -0.5f, 0.0f, -0.5f, 0.0f, -1.0f, 0.0f,  // bottom left
+
+    // Side 1 (front)
+    -0.5f, 0.0f, -0.5f, 0.0f, 0.707f, -0.707f,  // base left
+    0.5f, 0.0f, -0.5f, 0.0f, 0.707f, -0.707f,   // base right
+    0.0f, 0.75f, 0.0f, 0.0f, 0.707f, -0.707f,   // apex
+
+    // Side 2 (right)
+    0.5f, 0.0f, -0.5f, 0.707f, 0.707f, 0.0f,  // base front
+    0.5f, 0.0f, 0.5f, 0.707f, 0.707f, 0.0f,   // base back
+    0.0f, 0.75f, 0.0f, 0.707f, 0.707f, 0.0f,  // apex
+
+    // Side 3 (back)
+    0.5f, 0.0f, 0.5f, 0.0f, 0.707f, 0.707f,   // base right
+    -0.5f, 0.0f, 0.5f, 0.0f, 0.707f, 0.707f,  // base left
+    0.0f, 0.75f, 0.0f, 0.0f, 0.707f, 0.707f,  // apex
+
+    // Side 4 (left)
+    -0.5f, 0.0f, 0.5f, -0.707f, 0.707f, 0.0f,   // base back
+    -0.5f, 0.0f, -0.5f, -0.707f, 0.707f, 0.0f,  // base front
+    0.0f, 0.75f, 0.0f, -0.707f, 0.707f, 0.0f    // apex
+};
+
 constexpr int WINDOW_WIDTH  = 800;
 constexpr int WINDOW_HEIGHT = 600;
 
