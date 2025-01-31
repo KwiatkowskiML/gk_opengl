@@ -4,6 +4,10 @@
 
 #include "includes/Renderer.h"
 
+Renderer::~Renderer() { glfwTerminate(); }
+GLFWwindow *Renderer::getWindow() const { return windowManager->getWindow(); }
+Camera *Renderer::getCamera() const { return cameraManager.getActiveCamera(); }
+
 Renderer::Renderer(unsigned int width, unsigned int height)
     : windowManager(std::make_unique<WindowManager>(width, height)), windowWidth(width), windowHeight(height)
 {
@@ -13,8 +17,6 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     );  // Set the window user pointer to this Renderer instance
 }
 
-Renderer::~Renderer() { glfwTerminate(); }
-
 void Renderer::run()
 {
     // Shader initialization
@@ -23,10 +25,9 @@ void Renderer::run()
     // Vertex data setup
     setupVertexData();
 
-    float currentFrame = glfwGetTime();             // Get current frame time
-    float lastFrame    = 0.0f;                      // Track last frame time
-    float deltaTime    = currentFrame - lastFrame;  // Calculate time difference between frames
-    lastFrame          = currentFrame;              // Update last frame time
+    float currentFrame = 0.0f;
+    float lastFrame    = 0.0f;
+    float deltaTime    = 0.0f;
 
     // Render loop
     while (!glfwWindowShouldClose(windowManager->getWindow())) {
@@ -44,8 +45,6 @@ void Renderer::run()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
-GLFWwindow *Renderer::getWindow() const { return windowManager->getWindow(); }
-Camera *Renderer::getCamera() const { return cameraManager.getActiveCamera(); }
 
 void Renderer::setupVertexData()
 {
@@ -68,10 +67,10 @@ void Renderer::setupVertexData()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 }
+
 void Renderer::processInput(float deltaTime)
 {
-    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_ESCAPE) ==
-        GLFW_PRESS)  // Close the window if Escape key is pressed
+    if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(windowManager->getWindow(), true);
 
     // Handle movement input (WASD keys)
@@ -106,6 +105,7 @@ void Renderer::processInput(float deltaTime)
         }
     }
 }
+
 void Renderer::render(Shader &shader) const
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
