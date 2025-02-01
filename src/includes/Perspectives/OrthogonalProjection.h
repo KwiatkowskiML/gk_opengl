@@ -7,6 +7,8 @@
 
 #include "Projection.h"
 
+#include <iostream>
+
 class OrthogonalProjection : public Projection
 {
     public:
@@ -19,7 +21,7 @@ class OrthogonalProjection : public Projection
     // Get the orthogonal projection matrix
     glm::mat4 getProjectionMatrix() const override
     {
-        float aspectRatio = static_cast<float>(windowWidth) / windowHeight;
+        float aspectRatio = static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
 
         // Compute the boundaries for the orthographic projection
         float left   = -orthoScale * aspectRatio;
