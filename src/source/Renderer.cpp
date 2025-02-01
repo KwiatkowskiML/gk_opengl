@@ -79,11 +79,27 @@ void Renderer::render(Shader &shader) const
     shader.setFloat("phongProperties.specularStrength", 0.5f);
 
     // Get view and projection matrix
-    const glm::mat4 view       = cameraManager.getViewMatrix();
-    const glm::mat4 projection = glm::perspective(
-        glm::radians(cameraManager.getZoom()), static_cast<float>(windowWidth) / static_cast<float>(windowHeight), 0.1f,
-        100.0f
-    );
+    const glm::mat4 view = cameraManager.getViewMatrix();
+    // const glm::mat4 projection = glm::perspective(
+    //     glm::radians(cameraManager.getZoom()),
+    //     static_cast<float>(windowWidth) / static_cast<float>(windowHeight), 0.1f,
+    //     100.0f
+    // );
+
+    // Calculate the aspect ratio of the window
+    float aspectRatio = static_cast<float>(windowWidth) / windowHeight;
+
+    // Define a scale factor for the orthographic view; adjust as needed
+    float orthoScale = 1.0f;
+
+    // Compute the boundaries for the orthographic projection
+    float left   = -orthoScale * aspectRatio;
+    float right  = orthoScale * aspectRatio;
+    float bottom = -orthoScale;
+    float top    = orthoScale;
+
+    // Create the orthographic projection matrix
+    const glm::mat4 projection = glm::ortho(left, right, bottom, top, 0.1f, 100.0f);
 
     shader.setMat4("view", view);
     shader.setMat4("projection", projection);
