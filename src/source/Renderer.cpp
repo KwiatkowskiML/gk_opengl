@@ -151,7 +151,7 @@ void Renderer::processInput(float deltaTime)
 //-----------------------------------------------------------------------------------
 void Renderer::addCube(const glm::vec3 &position, const glm::vec3 &color)
 {
-    Model cube;
+    InternalModel cube;
     cube.vertices = std::vector<float>(std::begin(cubeVertices), std::end(cubeVertices));
     cube.position = position;
     cube.color    = color;
@@ -182,7 +182,7 @@ void Renderer::addCube(const glm::vec3 &position, const glm::vec3 &color)
 
 void Renderer::addSphere(const glm::vec3 &position, const glm::vec3 &color, float radius = 1.0f)
 {
-    Model sphere;
+    InternalModel sphere;
     sphere.position = position;
     sphere.color    = color;
     sphere.rotation = glm::vec3(0.0f);

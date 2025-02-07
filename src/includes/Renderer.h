@@ -20,8 +20,8 @@
 #include "Cameras/CameraConstant.h"
 #include "Cameras/CameraFPS.h"
 #include "Constants.h"
+#include "InternalModel.h"
 #include "LightSource.h"
-#include "Model.h"
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
 #include "WindowManager.h"
@@ -56,7 +56,7 @@ class Renderer
     ProjectionManager projectionManager;
     LightSource lightSource;
     unsigned int windowWidth, windowHeight;
-    std::vector<Model> models;
+    std::vector<InternalModel> models;
 
     //-----------------------------------------------------------------------------------
     // Input processing

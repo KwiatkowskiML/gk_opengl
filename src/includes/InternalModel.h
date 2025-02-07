@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class Model
+class InternalModel
 {
     public:
     unsigned int VAO;
