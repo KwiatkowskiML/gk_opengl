@@ -3,6 +3,8 @@
 //
 
 #include "includes/Renderer.h"
+#include <filesystem>
+#include "includes/Models/Model.h"
 
 //-----------------------------------------------------------------------------------
 // Constructor and destructor
@@ -48,6 +50,12 @@ void Renderer::run()
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
     float deltaTime    = 0.0f;
+
+    // Model ourModel(FileSystem::getPath("resources/objects/backpack/backpack.obj"));
+
+    auto path = std::filesystem::path("resources/backpack.obj");
+    std::cout << path << std::endl;
+    NewModel ourModel(path.string());
 
     // Render loop
     while (!glfwWindowShouldClose(windowManager->getWindow())) {

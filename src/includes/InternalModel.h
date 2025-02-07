@@ -2,8 +2,8 @@
 // Created by michal on 1/31/25.
 //
 
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef INTER_MODEL_H
+#define INTER_MODEL_H
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -19,4 +19,4 @@ class InternalModel
     glm::vec3 color;
 };
 
-#endif  // MODEL_H
+#endif  // INTER_MODEL_H

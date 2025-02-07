@@ -49,6 +49,8 @@ target_link_libraries(${LIB_NAME}  PRIVATE
         OpenGL::GL
         glfw
         glad
+        libStb
+        assimp
 )
 
 target_link_libraries(${EXEC_NAME} PRIVATE ${LIB_NAME})
