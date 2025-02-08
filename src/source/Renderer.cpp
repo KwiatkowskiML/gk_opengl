@@ -109,6 +109,16 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader) const
     }
 
     modelShader.use();
+
+    modelShader.setVec3("light.position", lightSource.position);
+    modelShader.setVec3("light.color", lightSource.color);
+    modelShader.setFloat("light.constant", lightSource.constant);
+    modelShader.setFloat("light.linear", lightSource.linear);
+    modelShader.setFloat("light.quadratic", lightSource.quadratic);
+    modelShader.setFloat("phongProperties.ambientStrength", 0.1f);
+    modelShader.setFloat("phongProperties.shininess", 32.0f);
+    modelShader.setFloat("phongProperties.specularStrength", 0.5f);
+
     modelShader.setMat4("view", view);
     modelShader.setMat4("projection", projection);
 
