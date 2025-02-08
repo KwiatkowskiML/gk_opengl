@@ -114,7 +114,7 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader) const
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(
-        modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f)
+        modelMatrix, glm::vec3(2.0f, 2.0f, -2.0f)
     );  // translate it down so it's at the center of the scene
     modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
 
