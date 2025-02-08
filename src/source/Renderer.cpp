@@ -4,7 +4,6 @@
 
 #include "includes/Renderer.h"
 #include <filesystem>
-#include "includes/Models/Model.h"
 
 //-----------------------------------------------------------------------------------
 // Constructor and destructor
@@ -22,7 +21,8 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     : windowManager(std::make_unique<WindowManager>(width, height)),
       windowWidth(width),
       windowHeight(height),
-      projectionManager(width, height, cameraManager.getZoom())
+      projectionManager(width, height, cameraManager.getZoom()),
+      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH))
 {
     setupLightSource();
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
@@ -46,16 +46,11 @@ void Renderer::run()
 {
     // Shader initialization
     Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
+    Shader modelShader(MODEL_VERTEX_SHADER_PATH, MODEL_FRAGMENT_SHADER_PATH);
 
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
     float deltaTime    = 0.0f;
-
-    // Model ourModel(FileSystem::getPath("resources/objects/backpack/backpack.obj"));
-
-    auto path = std::filesystem::path("resources/backpack.obj");
-    std::cout << path << std::endl;
-    NewModel ourModel(path.string());
 
     // Render loop
     while (!glfwWindowShouldClose(windowManager->getWindow())) {
@@ -65,52 +60,66 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(lightningShader);
+        render(lightningShader, modelShader);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &shader) const
+void Renderer::render(Shader &lightningShader, Shader &modelShader) const
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Activate shader
-    shader.use();
+    lightningShader.use();
 
     // Setup uniforms
-    shader.setVec3("light.position", lightSource.position);
-    shader.setVec3("light.color", lightSource.color);
-    shader.setFloat("light.constant", lightSource.constant);
-    shader.setFloat("light.linear", lightSource.linear);
-    shader.setFloat("light.quadratic", lightSource.quadratic);
-    shader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader.setFloat("phongProperties.ambientStrength", 0.1f);
-    shader.setFloat("phongProperties.shininess", 32.0f);
-    shader.setFloat("phongProperties.specularStrength", 0.5f);
+    lightningShader.setVec3("light.position", lightSource.position);
+    lightningShader.setVec3("light.color", lightSource.color);
+    lightningShader.setFloat("light.constant", lightSource.constant);
+    lightningShader.setFloat("light.linear", lightSource.linear);
+    lightningShader.setFloat("light.quadratic", lightSource.quadratic);
+    lightningShader.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    lightningShader.setFloat("phongProperties.ambientStrength", 0.1f);
+    lightningShader.setFloat("phongProperties.shininess", 32.0f);
+    lightningShader.setFloat("phongProperties.specularStrength", 0.5f);
 
     // Get view and projection matrix
     const glm::mat4 view       = cameraManager.getViewMatrix();
     const glm::mat4 projection = projectionManager.getProjectionMatrix();
+    glm::mat4 modelMatrix      = glm::mat4(1.0f);
 
-    shader.setMat4("view", view);
-    shader.setMat4("projection", projection);
+    lightningShader.setMat4("view", view);
+    lightningShader.setMat4("projection", projection);
 
     for (const auto &model : models) {
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
-        modelMatrix           = glm::translate(modelMatrix, model.position);
+        modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, model.position);
 
         // Apply rotation only to the center cube
         if (model.position == glm::vec3(0.0f, 0.0f, 0.0f)) {
             modelMatrix = glm::rotate(modelMatrix, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
         }
 
-        shader.setMat4("model", modelMatrix);
-        shader.setVec3("objectColor", model.color);
+        lightningShader.setMat4("model", modelMatrix);
+        lightningShader.setVec3("objectColor", model.color);
 
         glBindVertexArray(model.VAO);
         glDrawArrays(GL_TRIANGLES, 0, model.vertices.size() / 6);
     }
+
+    modelShader.use();
+    modelShader.setMat4("view", view);
+    modelShader.setMat4("projection", projection);
+
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(
+        modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f)
+    );  // translate it down so it's at the center of the scene
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    modelShader.setMat4("model", modelMatrix);
+    backpackModel.Draw(modelShader);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();

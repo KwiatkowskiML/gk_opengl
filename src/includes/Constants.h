@@ -7,10 +7,17 @@
 
 #include <string>
 
+// TODO: fix paths
 const std::string LIGHTNING_VERTEX_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_vertex_shader.glsl";
 const std::string LIGHTNING_FRAGMENT_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_fragment_shader.glsl";
+const std::string MODEL_VERTEX_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/model_vertex_shader.glsl";
+const std::string MODEL_FRAGMENT_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/model_fragment_shader.glsl";
+
+const std::string BACKPACK_MODEL_PATH = "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack.obj";
 
 constexpr float cubeVertices[] = {
     // positions          // normal vectors

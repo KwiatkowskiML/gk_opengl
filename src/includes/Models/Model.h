@@ -4,7 +4,6 @@
 
 #ifndef MODEL_H
 #define MODEL_H
-#define STB_IMAGE_IMPLEMENTATION
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -13,7 +12,7 @@
 #include "includes/Models/Mesh.h"
 #include "includes/Shader.h"
 
-unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
+inline unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
 {
     string filename = string(path);
     filename        = directory + '/' + filename;
@@ -54,8 +53,7 @@ class NewModel
 {
     public:
     // model data
-    vector<Texture> textures_loaded;  // stores all the textures loaded so far, optimization to make sure textures
-                                      // aren't loaded more than once.
+    vector<Texture> textures_loaded;
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
@@ -64,7 +62,7 @@ class NewModel
     NewModel(string const &path, bool gamma = false) : gammaCorrection(gamma) { loadModel(path); }
 
     // draws the model, and thus all its meshes
-    void Draw(Shader &shader)
+    void Draw(Shader &shader) const
     {
         for (unsigned int i = 0; i < meshes.size(); i++) meshes[i].Draw(shader);
     }
@@ -77,7 +75,8 @@ class NewModel
         Assimp::Importer importer;
         const aiScene *scene = importer.ReadFile(
             path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
-        );
+        );  // consider adding GenNormals
+
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)  // if is Not Zero
         {

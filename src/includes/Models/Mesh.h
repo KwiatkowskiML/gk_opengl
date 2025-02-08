@@ -51,7 +51,7 @@ class Mesh
     }
 
     // render the mesh
-    void Draw(Shader &shader)
+    void Draw(Shader &shader) const
     {
         unsigned int diffuseNr  = 1;
         unsigned int specularNr = 1;

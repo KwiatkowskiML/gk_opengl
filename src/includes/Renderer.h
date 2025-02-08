@@ -25,6 +25,7 @@
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
 #include "WindowManager.h"
+#include "includes/Models/Model.h"
 
 class Renderer
 {
@@ -39,7 +40,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& shader) const;
+    void render(Shader& lightningShader, Shader& modelShader) const;
 
     //-----------------------------------------------------------------------------------
     // Getters
@@ -57,6 +58,7 @@ class Renderer
     LightSource lightSource;
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
+    NewModel backpackModel;
 
     //-----------------------------------------------------------------------------------
     // Input processing
