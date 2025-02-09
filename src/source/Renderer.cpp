@@ -51,8 +51,6 @@ Camera *Renderer::getCamera() const { return cameraManager.getActiveCamera(); }
 void Renderer::run()
 {
     // Shader initialization
-    Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
-    Shader modelShader(MODEL_VERTEX_SHADER_PATH, MODEL_FRAGMENT_SHADER_PATH);
     Shader gShader(GBUFFER_VERTEX_SHADER_PATH, GBUFFER_FRAGMENT_SHADER_PATH);
     Shader lightningPassShader(LIGHTNING_PASS_VERTEX_SHADER_PATH, LIGHTNING_PASS_FRAGMENT_SHADER_PATH);
 
@@ -74,12 +72,12 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(lightningShader, modelShader, gShader, lightningPassShader);
+        render(gShader, lightningPassShader);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gShader, Shader &lightningPassShader)
+void Renderer::render(Shader &gShader, Shader &lightningPassShader)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -123,6 +121,7 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gSha
         glDrawArrays(GL_TRIANGLES, 0, geometricalModel.vertices.size() / 6);
     }
 
+    // Switching back to default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // Lightning pass

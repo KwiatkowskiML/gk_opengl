@@ -43,7 +43,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& lightningShader, Shader& modelShader, Shader& gShader, Shader& lightningPassShader);
+    void render(Shader& gShader, Shader& lightningPassShader);
 
     //-----------------------------------------------------------------------------------
     // Getters
