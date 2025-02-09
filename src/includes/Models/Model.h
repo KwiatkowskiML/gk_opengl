@@ -27,11 +27,16 @@ class NewModel
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
+    unsigned int pFlags;
 
     //-----------------------------------------------------------------------------------
     // Constructor: expects a file path to a 3D model
     //-----------------------------------------------------------------------------------
-    NewModel(string const &path, const bool gamma = false) : gammaCorrection(gamma) { loadModel(path); }
+    NewModel(string const &path, unsigned int pFlags = aiProcess_Triangulate, const bool gamma = false)
+        : pFlags(pFlags), gammaCorrection(gamma)
+    {
+        loadModel(path);
+    }
 
     //-----------------------------------------------------------------------------------
     // Draw the model

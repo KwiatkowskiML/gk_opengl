@@ -10,13 +10,21 @@
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
 {
     string filename = string(path);
-    filename        = directory + '/' + filename;
+
+    // Replace backslashes with forward slashes
+    for (auto &c : filename) {
+        if (c == '\\') {
+            c = '/';
+        }
+    }
+    filename = directory + '/' + filename;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+    std::cout << filename << std::endl;
     if (data) {
         GLenum format;
         if (nrComponents == 1)
@@ -56,7 +64,7 @@ void NewModel::loadModel(string const &path)
 {
     // read file via ASSIMP
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);  // consider adding GenNormals
+    const aiScene *scene = importer.ReadFile(path, pFlags);  // consider adding GenNormals
 
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)  // if is Not Zero
@@ -174,6 +182,8 @@ vector<Texture> NewModel::loadMaterialTextures(aiMaterial *mat, aiTextureType ty
             texture.path = str.C_Str();
             textures.push_back(texture);
             texturesLoaded.push_back(texture);
+
+            std::cout << "Texture loaded: " << texture.path << std::endl;
         }
     }
     return textures;

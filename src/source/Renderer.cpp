@@ -23,7 +23,7 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       windowHeight(height),
       projectionManager(width, height, cameraManager.getZoom()),
       backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
-      flashlightModel(std::filesystem::path(FLASHLIGHT_MODEL_PATH))
+      flashlightModel(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate)
 {
     setupLightSource();
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
@@ -114,6 +114,13 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader) const
 
     // Draw the model
     backpackModel.Draw(modelShader);
+
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(-2.0f, 2.0f, -2.0f));
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
+    modelShader.setMat4("model", modelMatrix);
+
+    flashlightModel.Draw(modelShader);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
