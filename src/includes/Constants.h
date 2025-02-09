@@ -17,7 +17,11 @@ const std::string MODEL_VERTEX_SHADER_PATH =
 const std::string MODEL_FRAGMENT_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/model_fragment_shader.glsl";
 
-const std::string BACKPACK_MODEL_PATH = "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack.obj";
+const std::string BACKPACK_MODEL_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack/backpack.obj";
+
+const std::string FLASHLIGHT_MODEL_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/flashlight/Flashlight.obj";
 
 constexpr float cubeVertices[] = {
     // positions          // normal vectors
@@ -83,10 +87,16 @@ constexpr int WINDOW_HEIGHT = 600;
 constexpr unsigned int SPHERE_SECTORS = 36;  // longitude
 constexpr unsigned int SPHERE_STACKS  = 18;  // latitude
 
+constexpr float BASIC_AMBIENT_STRENGTH  = 0.1f;
+constexpr float BASIC_SPECULAR_STRENGTH = 0.5f;
+constexpr float BASIC_SHININESS         = 32.0f;
+
 constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
 constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
+
+constexpr glm::vec3 OBJECT_COLOR(1.0f, 0.5f, 0.31f);
 
 #endif  // CONSTANTS_H

@@ -2,7 +2,9 @@
 // Created by michal on 1/30/25.
 //
 
-#include "../includes/Shader.h"
+#include "includes/Shader.h"
+
+#include <includes/Constants.h>
 
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
 {
@@ -51,6 +53,18 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
 void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
 {
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void Shader::setupLightningUniforms(const LightSource &lightSource)
+{
+    setVec3("light.position", lightSource.position);
+    setVec3("light.color", lightSource.color);
+    setFloat("light.constant", lightSource.constant);
+    setFloat("light.linear", lightSource.linear);
+    setFloat("light.quadratic", lightSource.quadratic);
+    setFloat("phongProperties.ambientStrength", BASIC_AMBIENT_STRENGTH);
+    setFloat("phongProperties.shininess", BASIC_SHININESS);
+    setFloat("phongProperties.specularStrength", BASIC_SPECULAR_STRENGTH);
 }
 
 std::string Shader::readShaderFile(const std::string &filePath)

@@ -59,6 +59,7 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
+    NewModel flashlightModel;
 
     //-----------------------------------------------------------------------------------
     // Input processing

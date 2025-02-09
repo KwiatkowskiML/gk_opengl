@@ -5,6 +5,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include "LightSource.h"
+
 #include <glad/glad.h>
 #include <fstream>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -34,6 +36,11 @@ class Shader
     void setFloat(const std::string &name, const float value) const;
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
     void setVec3(const std::string &name, const glm::vec3 &value) const;
+
+    //-----------------------------------------------------------------------------------
+    // Setup uniform values
+    //-----------------------------------------------------------------------------------
+    void setupLightningUniforms(const LightSource &lightSource);
 
     private:
     //-----------------------------------------------------------------------------------
