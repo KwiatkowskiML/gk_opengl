@@ -25,6 +25,7 @@
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
 #include "WindowManager.h"
+#include "includes/Models/Flashlight.h"
 #include "includes/Models/Model.h"
 
 class Renderer
@@ -59,7 +60,7 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
-    NewModel flashlightModel;
+    Flashlight flashlightModel;
 
     //-----------------------------------------------------------------------------------
     // Input processing
