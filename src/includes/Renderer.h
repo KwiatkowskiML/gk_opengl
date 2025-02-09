@@ -43,7 +43,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& lightningShader, Shader& modelShader) const;
+    void render(Shader& lightningShader, Shader& modelShader, Shader& gShader) const;
 
     //-----------------------------------------------------------------------------------
     // Getters
@@ -62,6 +62,17 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
+
+    // G-buffer
+    unsigned int gBuffer;
+    unsigned int gPosition;
+    unsigned int gNormal;
+    unsigned int gColorSpec;
+
+    //-----------------------------------------------------------------------------------
+    // G-buffer setup
+    //-----------------------------------------------------------------------------------
+    void setupGBuffer();
 
     //-----------------------------------------------------------------------------------
     // Input processing

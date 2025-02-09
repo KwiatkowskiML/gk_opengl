@@ -30,6 +30,9 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     flashlightModel =
         new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
 
+    // Setup G-buffer
+    setupGBuffer();
+
     addCube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.5f, 0.31f));
     addCube(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.31f, 1.0f, 0.5f));
     addSphere(glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.7f, 1.0f), 1.0f);
@@ -50,6 +53,7 @@ void Renderer::run()
     // Shader initialization
     Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
     Shader modelShader(MODEL_VERTEX_SHADER_PATH, MODEL_FRAGMENT_SHADER_PATH);
+    Shader gShader(GBUFFER_VERTEX_SHADER_PATH, GBUFFER_FRAGMENT_SHADER_PATH);
 
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
@@ -63,67 +67,90 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(lightningShader, modelShader);
+        render(lightningShader, modelShader, gShader);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &lightningShader, Shader &modelShader) const
+void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gShader) const
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Activate shader
-    lightningShader.use();
-
-    // Setup uniforms
-    lightningShader.setupLightningUniforms(lightSource);
-    lightningShader.setVec3("objectColor", OBJECT_COLOR);
-
-    // Get view and projection matrix
+    // 1. geometry pass: render scene's geometry/color data into gbuffer
+    // -----------------------------------------------------------------
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     const glm::mat4 view       = cameraManager.getViewMatrix();
     const glm::mat4 projection = projectionManager.getProjectionMatrix();
-    glm::mat4 modelMatrix      = glm::mat4(1.0f);
+    glm::mat4 model            = glm::mat4(1.0f);
 
-    lightningShader.setMat4("view", view);
-    lightningShader.setMat4("projection", projection);
+    gShader.use();
+    gShader.setMat4("projection", projection);
+    gShader.setMat4("view", view);
 
-    for (const auto &model : models) {
-        modelMatrix = glm::mat4(1.0f);
-        modelMatrix = glm::translate(modelMatrix, model.position);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(2.0f, 2.0f, -2.0f));
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    gShader.setMat4("model", model);
 
-        // Apply rotation only to the center cube
-        if (model.position == glm::vec3(0.0f, 0.0f, 0.0f)) {
-            modelMatrix = glm::rotate(modelMatrix, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
-        }
+    backpackModel.Draw(gShader);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        lightningShader.setMat4("model", modelMatrix);
-        lightningShader.setVec3("objectColor", model.color);
+    {
+        // // Activate shader
+        // lightningShader.use();
+        //
+        // // Setup uniforms
+        // lightningShader.setupLightningUniforms(lightSource);
 
-        glBindVertexArray(model.VAO);
-        glDrawArrays(GL_TRIANGLES, 0, model.vertices.size() / 6);
-    }
+        // Get view and projection matrix
+        // const glm::mat4 view       = cameraManager.getViewMatrix();
+        // const glm::mat4 projection = projectionManager.getProjectionMatrix();
+        // glm::mat4 modelMatrix      = glm::mat4(1.0f);
 
-    // Activate shader and setup uniforms
-    modelShader.use();
-    modelShader.setupLightningUniforms(lightSource);
-    modelShader.setMat4("view", view);
-    modelShader.setMat4("projection", projection);
-    modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 2.0f, -2.0f));
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
-    modelShader.setMat4("model", modelMatrix);
+        // lightningShader.setMat4("view", view);
+        // lightningShader.setMat4("projection", projection);
 
-    // Draw the model
-    backpackModel.Draw(modelShader);
+        // Draw each model in the vector
+        // for (const auto &model : models) {
+        //     modelMatrix = glm::mat4(1.0f);
+        //     modelMatrix = glm::translate(modelMatrix, model.position);
+        //
+        //     // Apply rotation only to the center cube
+        //     if (model.position == glm::vec3(0.0f, 0.0f, 0.0f)) {
+        //         modelMatrix = glm::rotate(modelMatrix, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 1.0f,
+        //         0.0f));
+        //     }
+        //
+        //     lightningShader.setMat4("model", modelMatrix);
+        //     lightningShader.setVec3("objectColor", model.color);
+        //
+        //     glBindVertexArray(model.VAO);
+        //     glDrawArrays(GL_TRIANGLES, 0, model.vertices.size() / 6);
+        // }
 
-    // setup flashlight model
-    if (cameraManager.getCurrentType() == FPS) {
-        modelMatrix = flashlightModel->getModelMatrix(*cameraManager.getActiveCamera());
-        modelShader.setMat4("model", modelMatrix);
+        // // Activate shader and setup uniforms
+        // modelShader.use();
+        // modelShader.setupLightningUniforms(lightSource);
+        // modelShader.setMat4("view", view);
+        // modelShader.setMat4("projection", projection);
+        // modelMatrix = glm::mat4(1.0f);
+        // modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 2.0f, -2.0f));
+        // modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
+        // modelShader.setMat4("model", modelMatrix);
+        //
+        // // Draw the model
+        // backpackModel.Draw(modelShader);
 
-        // Draw the flashlight model
-        flashlightModel->Draw(modelShader);
+        // setup flashlight model
+        // if (cameraManager.getCurrentType() == FPS) {
+        //     modelMatrix = flashlightModel->getModelMatrix(*cameraManager.getActiveCamera());
+        //     modelShader.setMat4("model", modelMatrix);
+        //
+        //     // Draw the flashlight model
+        //     flashlightModel->Draw(modelShader);
+        // }
     }
 
     glfwSwapBuffers(windowManager->getWindow());
@@ -166,6 +193,55 @@ void Renderer::processInput(float deltaTime)
             cameraManager.switchCamera(CIRCULAR);
         }
     }
+}
+
+//-----------------------------------------------------------------------------------
+// G-buffer setup
+//-----------------------------------------------------------------------------------
+void Renderer::setupGBuffer()
+{
+    glGenFramebuffers(1, &gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+
+    // setup position buffer
+    glGenTextures(1, &gPosition);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+
+    // setup normal buffer
+    glGenTextures(1, &gNormal);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+
+    // setup color and specular buffer
+    glGenTextures(1, &gColorSpec);
+    glBindTexture(GL_TEXTURE_2D, gColorSpec);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, windowWidth, windowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+
+    // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+    unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
+    glDrawBuffers(3, attachments);
+
+    // create and attach depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowWidth, windowHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+
+    // finally check if framebuffer is complete
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 //-----------------------------------------------------------------------------------
