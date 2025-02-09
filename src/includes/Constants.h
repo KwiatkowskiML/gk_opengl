@@ -6,6 +6,7 @@
 #define CONSTANTS_H
 
 #include <string>
+#include <vector>
 
 // TODO: fix paths
 const std::string GBUFFER_VERTEX_SHADER_PATH =
@@ -18,11 +19,24 @@ const std::string LIGHTNING_PASS_VERTEX_SHADER_PATH =
 const std::string LIGHTNING_PASS_FRAGMENT_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_pass_fragment_shader.glsl";
 
+const std::string SKYBOX_VERTEX_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/skybox_vertex_shader.glsl";
+const std::string SKYBOX_FRAGMENT_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/skybox_fragment_shader.glsl";
+
 const std::string BACKPACK_MODEL_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack/backpack.obj";
-
 const std::string FLASHLIGHT_MODEL_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/flashlight/Flashlight.obj";
+
+const std::vector<std::string> DAY_SKYBOX_FACES = {
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/right.jpg",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/left.jpg",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/top.jpg",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/bottom.jpg",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/front.jpg",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/back.jpg"
+};
 
 constexpr float cubeVertices[] = {
     // positions          // normal vectors
@@ -80,6 +94,27 @@ constexpr float pyramidVertices[] = {
     -0.5f, 0.0f, 0.5f, -0.707f, 0.707f, 0.0f,   // base back
     -0.5f, 0.0f, -0.5f, -0.707f, 0.707f, 0.0f,  // base front
     0.0f, 0.75f, 0.0f, -0.707f, 0.707f, 0.0f    // apex
+};
+
+const std::vector<float> skyboxVertices = {
+    // positions
+    -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f,
+    1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f,
+
+    -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f,
+    -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f, 1.0f,
+
+    1.0f,  -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,
+    1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f, -1.0f,
+
+    -1.0f, -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,
+    1.0f,  1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f, -1.0f, 1.0f,
+
+    -1.0f, 1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  1.0f,
+    1.0f,  1.0f,  1.0f,  -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f,  -1.0f,
+
+    -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, -1.0f,
+    1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f
 };
 
 constexpr int WINDOW_WIDTH  = 800;

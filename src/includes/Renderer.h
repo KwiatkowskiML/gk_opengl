@@ -24,6 +24,7 @@
 #include "LightSource.h"
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
+#include "SkyBox.h"
 #include "WindowManager.h"
 #include "includes/Models/Flashlight.h"
 #include "includes/Models/Model.h"
@@ -43,7 +44,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& gShader, Shader& lightningPassShader);
+    void render(Shader& gShader, Shader& lightningPassShader, Shader& skyboxShader, SkyBox& skybox);
 
     //-----------------------------------------------------------------------------------
     // Getters

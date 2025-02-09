@@ -3,6 +3,9 @@
 //
 
 #include "includes/Renderer.h"
+
+#include <includes/SkyBox.h>
+
 #include <filesystem>
 
 //-----------------------------------------------------------------------------------
@@ -53,6 +56,7 @@ void Renderer::run()
     // Shader initialization
     Shader gShader(GBUFFER_VERTEX_SHADER_PATH, GBUFFER_FRAGMENT_SHADER_PATH);
     Shader lightningPassShader(LIGHTNING_PASS_VERTEX_SHADER_PATH, LIGHTNING_PASS_FRAGMENT_SHADER_PATH);
+    Shader skyboxShader(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
 
     // shader configuration
     lightningPassShader.use();
@@ -60,6 +64,12 @@ void Renderer::run()
     lightningPassShader.setInt("gNormal", 1);
     lightningPassShader.setInt("gAlbedoSpec", 2);
 
+    // skybox setup
+    SkyBox skybox(DAY_SKYBOX_FACES, skyboxVertices);
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
+
+    // Time variables
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
     float deltaTime    = 0.0f;
@@ -72,14 +82,14 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(gShader, lightningPassShader);
+        render(gShader, lightningPassShader, skyboxShader, skybox);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &gShader, Shader &lightningPassShader)
+void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyboxShader, SkyBox &skybox)
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Geometry pass
@@ -87,7 +97,7 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Load backpack model
-    const glm::mat4 view       = cameraManager.getViewMatrix();
+    glm::mat4 view             = cameraManager.getViewMatrix();
     const glm::mat4 projection = projectionManager.getProjectionMatrix();
     glm::mat4 model            = glm::mat4(1.0f);
 
@@ -137,6 +147,26 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader)
     lightningPassShader.setupLightningUniforms(lightSource);
     lightningPassShader.setMat4("view", view);
     renderQuad();
+
+    // Clear the depth buffer so that the skybox isn’t blocked.
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Render the skybox
+    // draw skybox as last
+    glDepthFunc(GL_LEQUAL
+    );  // change depth function so depth test passes when values are equal to depth buffer's content
+    skyboxShader.use();
+    view = glm::mat4(glm::mat3(cameraManager.getViewMatrix()));  // remove translation from the view matrix
+    skyboxShader.setMat4("view", view);
+    skyboxShader.setMat4("projection", projection);
+
+    // skybox cube
+    glBindVertexArray(skybox.skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTextureID());
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS);  // set depth function back to default
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
