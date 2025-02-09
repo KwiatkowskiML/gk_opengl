@@ -43,7 +43,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& lightningShader, Shader& modelShader, Shader& gShader) const;
+    void render(Shader& lightningShader, Shader& modelShader, Shader& gShader, Shader& lightningPassShader);
 
     //-----------------------------------------------------------------------------------
     // Getters
@@ -69,10 +69,15 @@ class Renderer
     unsigned int gNormal;
     unsigned int gColorSpec;
 
+    // Lightning pass
+    unsigned int quadVAO = 0;
+    unsigned int quadVBO;
+
     //-----------------------------------------------------------------------------------
     // G-buffer setup
     //-----------------------------------------------------------------------------------
     void setupGBuffer();
+    void renderQuad();
 
     //-----------------------------------------------------------------------------------
     // Input processing

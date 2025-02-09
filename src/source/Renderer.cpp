@@ -54,6 +54,13 @@ void Renderer::run()
     Shader lightningShader(LIGHTNING_VERTEX_SHADER_PATH, LIGHTNING_FRAGMENT_SHADER_PATH);
     Shader modelShader(MODEL_VERTEX_SHADER_PATH, MODEL_FRAGMENT_SHADER_PATH);
     Shader gShader(GBUFFER_VERTEX_SHADER_PATH, GBUFFER_FRAGMENT_SHADER_PATH);
+    Shader lightningPassShader(LIGHTNING_PASS_VERTEX_SHADER_PATH, LIGHTNING_PASS_FRAGMENT_SHADER_PATH);
+
+    // shader configuration
+    lightningPassShader.use();
+    lightningPassShader.setInt("gPosition", 0);
+    lightningPassShader.setInt("gNormal", 1);
+    lightningPassShader.setInt("gAlbedoSpec", 2);
 
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
@@ -67,12 +74,12 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(lightningShader, modelShader, gShader);
+        render(lightningShader, modelShader, gShader, lightningPassShader);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gShader) const
+void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gShader, Shader &lightningPassShader)
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,61 +104,20 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gSha
     backpackModel.Draw(gShader);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    {
-        // // Activate shader
-        // lightningShader.use();
-        //
-        // // Setup uniforms
-        // lightningShader.setupLightningUniforms(lightSource);
+    // 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's
+    // content.
+    // -----------------------------------------------------------------------------------------------------------------------
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    lightningPassShader.use();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, gColorSpec);
 
-        // Get view and projection matrix
-        // const glm::mat4 view       = cameraManager.getViewMatrix();
-        // const glm::mat4 projection = projectionManager.getProjectionMatrix();
-        // glm::mat4 modelMatrix      = glm::mat4(1.0f);
-
-        // lightningShader.setMat4("view", view);
-        // lightningShader.setMat4("projection", projection);
-
-        // Draw each model in the vector
-        // for (const auto &model : models) {
-        //     modelMatrix = glm::mat4(1.0f);
-        //     modelMatrix = glm::translate(modelMatrix, model.position);
-        //
-        //     // Apply rotation only to the center cube
-        //     if (model.position == glm::vec3(0.0f, 0.0f, 0.0f)) {
-        //         modelMatrix = glm::rotate(modelMatrix, static_cast<float>(glfwGetTime()), glm::vec3(0.0f, 1.0f,
-        //         0.0f));
-        //     }
-        //
-        //     lightningShader.setMat4("model", modelMatrix);
-        //     lightningShader.setVec3("objectColor", model.color);
-        //
-        //     glBindVertexArray(model.VAO);
-        //     glDrawArrays(GL_TRIANGLES, 0, model.vertices.size() / 6);
-        // }
-
-        // // Activate shader and setup uniforms
-        // modelShader.use();
-        // modelShader.setupLightningUniforms(lightSource);
-        // modelShader.setMat4("view", view);
-        // modelShader.setMat4("projection", projection);
-        // modelMatrix = glm::mat4(1.0f);
-        // modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 2.0f, -2.0f));
-        // modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
-        // modelShader.setMat4("model", modelMatrix);
-        //
-        // // Draw the model
-        // backpackModel.Draw(modelShader);
-
-        // setup flashlight model
-        // if (cameraManager.getCurrentType() == FPS) {
-        //     modelMatrix = flashlightModel->getModelMatrix(*cameraManager.getActiveCamera());
-        //     modelShader.setMat4("model", modelMatrix);
-        //
-        //     // Draw the flashlight model
-        //     flashlightModel->Draw(modelShader);
-        // }
-    }
+    lightningPassShader.setupLightningUniforms(lightSource);
+    renderQuad();
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
@@ -242,6 +208,31 @@ void Renderer::setupGBuffer()
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::renderQuad()
+{
+    if (quadVAO == 0) {
+        float quadVertices[] = {
+            // positions        // texture Coords
+            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), static_cast<void *>(nullptr));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 }
 
 //-----------------------------------------------------------------------------------

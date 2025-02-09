@@ -23,6 +23,11 @@ const std::string GBUFFER_VERTEX_SHADER_PATH =
 const std::string GBUFFER_FRAGMENT_SHADER_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/gbuffer_fragment_shader.glsl";
 
+const std::string LIGHTNING_PASS_VERTEX_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_pass_vertex_shader.glsl";
+const std::string LIGHTNING_PASS_FRAGMENT_SHADER_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_pass_fragment_shader.glsl";
+
 const std::string BACKPACK_MODEL_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack/backpack.obj";
 
