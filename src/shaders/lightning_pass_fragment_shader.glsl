@@ -24,11 +24,11 @@ struct PhongProperties{
 
 uniform Light light;
 uniform PhongProperties phongProperties;
-uniform vec3 view;
+uniform mat4 view;
 
 void main()
 {
-    vec3 lightPosCamSpace = light.position;
+    vec3 lightPosCamSpace = vec3(view * vec4(light.position, 1.0));
 
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
@@ -46,13 +46,21 @@ void main()
     vec3 diffuse = diff * light.color * Diffuse;
 
     // specular
-    vec3 viewDir = normalize(view - FragPos);
+    vec3 viewDir = normalize(-FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), phongProperties.shininess);
     vec3 specular = spec * light.color *  Specular;
 
+    // attenuation
+    float distance    = length(lightPosCamSpace - FragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+    ambient  *= attenuation;
+    diffuse  *= attenuation;
+    specular *= attenuation;
+
 
     vec3 lightning = ambient + diffuse + specular;
-    FragColor = vec4(specular, 1.0);
+    FragColor = vec4(lightning, 1.0);
 }
 

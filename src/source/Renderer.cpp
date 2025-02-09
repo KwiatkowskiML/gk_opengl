@@ -117,6 +117,7 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gSha
     glBindTexture(GL_TEXTURE_2D, gColorSpec);
 
     lightningPassShader.setupLightningUniforms(lightSource);
+    lightningPassShader.setMat4("view", view);
     renderQuad();
 
     glfwSwapBuffers(windowManager->getWindow());

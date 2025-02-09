@@ -15,10 +15,12 @@ void main()
 {
     TexCoords = aTexCoords;
 
-    vec4 worldPos = model * vec4(aPos, 1.0);
-    FragPos = worldPos.xyz;
+    // Frag pos in camera space
+    FragPos = vec3(view * model * vec4(aPos, 1.0));
 
-    Normal = transpose(inverse(mat3(model))) * aNormal;
-    gl_Position = projection * view * worldPos;
+    // Normal vector in camera space
+    Normal = mat3(transpose(inverse(view * model))) * aNormal;
+
+    gl_Position = projection * vec4(FragPos, 1.0);
 }
 
