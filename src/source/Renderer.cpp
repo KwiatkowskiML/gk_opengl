@@ -15,18 +15,20 @@ Renderer::~Renderer()
         glDeleteBuffers(1, &model.VBO);
     }
     glfwTerminate();
+    delete flashlightModel;
 }
 
 Renderer::Renderer(unsigned int width, unsigned int height)
     : windowManager(std::make_unique<WindowManager>(width, height)),
+      projectionManager(width, height, cameraManager.getZoom()),
       windowWidth(width),
       windowHeight(height),
-      projectionManager(width, height, cameraManager.getZoom()),
-      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
-      flashlightModel(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate)
+      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH))
 {
     setupLightSource();
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
+    flashlightModel =
+        new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
 
     addCube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.5f, 0.31f));
     addCube(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.31f, 1.0f, 0.5f));
@@ -117,11 +119,11 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader) const
 
     // setup flashlight model
     if (cameraManager.getCurrentType() == FPS) {
-        modelMatrix = flashlightModel.getModelMatrix(*cameraManager.getActiveCamera());
+        modelMatrix = flashlightModel->getModelMatrix(*cameraManager.getActiveCamera());
         modelShader.setMat4("model", modelMatrix);
 
         // Draw the flashlight model
-        flashlightModel.Draw(modelShader);
+        flashlightModel->Draw(modelShader);
     }
 
     glfwSwapBuffers(windowManager->getWindow());

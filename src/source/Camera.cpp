@@ -2,7 +2,7 @@
 // Created by michal on 1/30/25.
 //
 
-#include "../includes/Cameras/Camera.h"
+#include "includes/Cameras/Camera.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.07f), Zoom(45.0f)

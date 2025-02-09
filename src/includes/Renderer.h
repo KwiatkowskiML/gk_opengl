@@ -31,6 +31,8 @@
 class Renderer
 {
     public:
+    Flashlight* flashlightModel;
+
     //-----------------------------------------------------------------------------------
     // Constructor and Destructor
     //-----------------------------------------------------------------------------------
@@ -60,7 +62,6 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
-    Flashlight flashlightModel;
 
     //-----------------------------------------------------------------------------------
     // Input processing
