@@ -6,14 +6,18 @@ layout (location = 2) in vec2 aTexCoords;
 out vec2 TexCoords;
 out vec3 FragPos;
 out vec3 Normal;
+flat out int hasTexture;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform bool useTexture;
 
 void main()
 {
-    TexCoords = aTexCoords;
+    // Pass the texture if needed
+    TexCoords = useTexture ? aTexCoords : vec2(0.0, 0.0);
+    hasTexture = useTexture ? 1 : 0;
 
     // Frag pos in camera space
     FragPos = vec3(view * model * vec4(aPos, 1.0));

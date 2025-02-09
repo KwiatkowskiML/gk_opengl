@@ -84,29 +84,48 @@ void Renderer::render(Shader &lightningShader, Shader &modelShader, Shader &gSha
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // 1. geometry pass: render scene's geometry/color data into gbuffer
-    // -----------------------------------------------------------------
+    // Geometry pass
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Load backpack model
     const glm::mat4 view       = cameraManager.getViewMatrix();
     const glm::mat4 projection = projectionManager.getProjectionMatrix();
     glm::mat4 model            = glm::mat4(1.0f);
 
+    // Set shader for model
     gShader.use();
     gShader.setMat4("projection", projection);
     gShader.setMat4("view", view);
+
+    // Set texture loading
+    gShader.setBool("useTexture", true);
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(2.0f, 2.0f, -2.0f));
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
     gShader.setMat4("model", model);
 
+    // Draw backpack model
     backpackModel.Draw(gShader);
+
+    // Draw other models
+    gShader.setBool("useTexture", false);
+    gShader.setFloat("specularIntensity", 0.5f);  // Adjust as needed
+    for (const auto &geometricalModel : models) {
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, geometricalModel.position);
+
+        gShader.setMat4("model", model);
+        gShader.setVec3("objectColor", geometricalModel.color);
+
+        glBindVertexArray(geometricalModel.VAO);
+        glDrawArrays(GL_TRIANGLES, 0, geometricalModel.vertices.size() / 6);
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's
-    // content.
-    // -----------------------------------------------------------------------------------------------------------------------
+    // Lightning pass
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     lightningPassShader.use();
     glActiveTexture(GL_TEXTURE0);
