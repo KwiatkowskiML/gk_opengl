@@ -93,6 +93,7 @@ vec3 CalcSpotLight(SpotLight light)
 {
     // Calculate light position in camera space
     vec3 lightPosCamSpace = vec3(view * vec4(light.position, 1.0));
+    vec3 directionCameraSpace = mat3(transpose(inverse(view))) * light.direction;
 
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
@@ -115,7 +116,7 @@ vec3 CalcSpotLight(SpotLight light)
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
     // spotlight intensity
-    float theta = dot(lightDir, normalize(-light.direction)); // reconsider light direciton vector
+    float theta = dot(lightDir, normalize(-directionCameraSpace));
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
