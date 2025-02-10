@@ -81,6 +81,9 @@ void Renderer::run()
         deltaTime    = currentFrame - lastFrame;
         lastFrame    = currentFrame;
 
+        if (flashlightModel->shouldMove)
+            flashlightModel->updateFlashLightPosition(deltaTime);
+
         processInput(deltaTime);
         render(gShader, lightningPassShader, skyboxShader);
         cameraManager.updateCamera(deltaTime);

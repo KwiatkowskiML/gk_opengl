@@ -15,13 +15,19 @@ class Flashlight : public NewModel
     public:
     // Flashlight properties
     SpotLight spotLight;
+    bool shouldMove = true;
 
     //-----------------------------------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------------------------------
     Flashlight(string const &path, unsigned int flags)
-        : NewModel(path, flags), position(INITIAL_FLASHLIGHT_POSITION), rotation(glm::vec3(0.0f, 0.0f, 0.0f))
+        : NewModel(path, flags),
+          position(INITIAL_FLASHLIGHT_POSITION),
+          initialPosition(INITIAL_FLASHLIGHT_POSITION),
+          rotation(glm::vec3(0.0f, 0.0f, 0.0f))
     {
+        movementTime = 0.0f;
+
         spotLight.position = INITIAL_FLASHLIGHT_POSITION;
         spotLight.color    = glm::vec3(1.0f, 1.0f, 1.0f);
 
@@ -79,12 +85,46 @@ class Flashlight : public NewModel
         updateSpotLightDirection();
     }
 
+    //-----------------------------------------------------------------------------------
+    // Update the flashlight position
+    //-----------------------------------------------------------------------------------
+    void updateFlashLightPosition(const float &deltaTime)
+    {
+        if (!shouldMove)
+            return;
+
+        // Update movement time
+        movementTime += deltaTime;
+
+        // Calculate the new z offset
+        float speedFactor       = 0.5f;
+        float movementAmplitude = 2.0f;
+        float zOffset           = sin(movementTime * speedFactor) * movementAmplitude;
+
+        // Calculate the rotation
+        float rotationAmplitude = 25.0f;
+        float yRotation         = rotationAmplitude * sin(movementTime);
+        float xRotation         = rotationAmplitude * cos(movementTime);
+
+        // Setup new position and rotation
+        glm::vec3 newPosition = initialPosition;
+        newPosition.z += zOffset;
+        setPosition(newPosition);
+
+        glm::vec3 newRotation = rotation;
+        newRotation.y         = yRotation;
+        newRotation.x         = xRotation;
+        setRotation(newRotation);
+    }
+
     private:
     //-----------------------------------------------------------------------------------
     // Private functions
     //-----------------------------------------------------------------------------------
     glm::vec3 position;
     glm::vec3 rotation;
+    float movementTime;
+    glm::vec3 initialPosition;
 
     void updateSpotLightDirection()
     {

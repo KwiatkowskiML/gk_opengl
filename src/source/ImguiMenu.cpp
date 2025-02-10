@@ -102,25 +102,26 @@ void ImguiMenu::DisplayMenu(
 
         // Display current position values
         ImGui::Text("Current flashlight position: (%.2f, %.2f, %.2f)", tempPosition.x, tempPosition.y, tempPosition.z);
-
         ImGui::Separator();
 
         // Rotation controls
-        if (ImGui::TreeNode("Rotation")) {
-            glm::vec3 tempRotation = flashlight->getRotation();
-
-            if (ImGui::SliderFloat("Pitch (X)", &tempRotation.x, -90.0f, 90.0f, "%.1f°") ||
-                ImGui::SliderFloat("Yaw (Y)", &tempRotation.y, -180.0f, 180.0f, "%.1f°")) {
-                flashlight->setRotation(tempRotation);
-            }
-
-            ImGui::Text("Current rotation: Pitch: %.1f°, Yaw: %.1f°", tempRotation.x, tempRotation.y);
-            ImGui::TreePop();
+        glm::vec3 tempRotation = flashlight->getRotation();
+        if (ImGui::SliderFloat("Pitch (X)", &tempRotation.x, -90.0f, 90.0f, "%.1f°") ||
+            ImGui::SliderFloat("Yaw (Y)", &tempRotation.y, -180.0f, 180.0f, "%.1f°")) {
+            flashlight->setRotation(tempRotation);
         }
 
+        // Display the current rotation values
+        ImGui::Text("Current rotation: Pitch: %.1f°, Yaw: %.1f°", tempRotation.x, tempRotation.y);
         ImGui::Separator();
 
-        // Additional menu options can be added here
+        // Control the movement of the flashlight
+        bool isMoving = flashlight->shouldMove;
+        if (ImGui::Checkbox("Auto Movement", &isMoving)) {
+            flashlight->shouldMove = isMoving;
+        }
+        ImGui::Separator();
+
         ImGui::Text("Press TAB to toggle this menu");
         ImGui::Text(
             "Current camera position: (%.2f, %.2f, %.2f)", cameraManager.getActiveCamera()->Position.x,
