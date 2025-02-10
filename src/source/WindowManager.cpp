@@ -65,7 +65,7 @@ void WindowManager::mouse_callback(GLFWwindow *window, const double xpos, const 
     auto renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 
     // Do not process mouse movement if ImGui menu is shown
-    if (renderer && !renderer->showImGuiMenu) {
+    if (renderer && !renderer->imguiMenu->ShouldShowMenu()) {
         if (firstMouse) {
             lastX      = xpos;
             lastY      = ypos;

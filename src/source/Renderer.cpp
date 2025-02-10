@@ -20,13 +20,6 @@ Renderer::~Renderer()
     }
     glfwTerminate();
     delete flashlightModel;
-
-    //-----------------------------------------------------------------------------------
-    // Cleanup ImGui
-    //-----------------------------------------------------------------------------------
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }
 
 Renderer::Renderer(unsigned int width, unsigned int height)
@@ -48,19 +41,8 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     addCube(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(0.31f, 1.0f, 0.5f));
     addSphere(glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(0.5f, 0.7f, 1.0f), 1.0f);
 
-    //-----------------------------------------------------------------------------------
-    // Initialize ImGui
-    //-----------------------------------------------------------------------------------
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(windowManager->getWindow(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    // init menu
+    imguiMenu = std::make_unique<ImguiMenu>(windowManager->getWindow());
 }
 
 //-----------------------------------------------------------------------------------
@@ -123,55 +105,15 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
     // Skybox rendering
     dispalySkybox(skyboxShader, skybox);
 
-    // Start ImGui frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    // Render ImGui menu if enabled
-    if (showImGuiMenu) {
-        ImGui::Begin("Renderer Menu", &showImGuiMenu, ImGuiWindowFlags_AlwaysAutoResize);
-
-        // Camera type selection
-        const char *cameraTypes[]    = {"FPS", "Constant", "Circular"};
-        static int currentCameraType = 0;
-
-        if (ImGui::Combo("Camera Type", &currentCameraType, cameraTypes, IM_ARRAYSIZE(cameraTypes))) {
-            switch (currentCameraType) {
-                case 0:
-                    cameraManager.switchCamera(FPS);
-                    break;
-                case 1:
-                    cameraManager.switchCamera(CONSTANT);
-                    break;
-                case 2:
-                    cameraManager.switchCamera(CIRCULAR);
-                    break;
-            }
-        }
-
-        // Additional menu options can be added here
-        ImGui::Text("Press TAB to toggle this menu");
-        ImGui::Text(
-            "Current camera position: (%.2f, %.2f, %.2f)", getCamera()->Position.x, getCamera()->Position.y,
-            getCamera()->Position.z
-        );
-
-        ImGui::End();
-    }
-
-    // Render ImGui (with safety checks)
-    ImGui::Render();
-    ImDrawData *drawData = ImGui::GetDrawData();
-    if (drawData) {
-        ImGui_ImplOpenGL3_RenderDrawData(drawData);
-    }
+    // display menu
+    if (imguiMenu->ShouldShowMenu())
+        imguiMenu->DisplayMenu(cameraManager);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
 }
 
-void Renderer::processInput(float deltaTime)
+void Renderer::processInput(float deltaTime) const
 {
     if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(windowManager->getWindow(), true);
@@ -183,11 +125,11 @@ void Renderer::processInput(float deltaTime)
     // Detect key press (from not pressed to pressed)
     if (tabState == GLFW_PRESS && !tabPressed) {
         std::cout << "Toggling ImGui menu" << std::endl;
-        showImGuiMenu = !showImGuiMenu;
-        tabPressed    = true;  // Set flag to prevent repeated toggles
+        imguiMenu->toggleMenu();
+        tabPressed = true;  // Set flag to prevent repeated toggles
 
         // Toggle cursor mode when menu is shown
-        if (showImGuiMenu) {
+        if (imguiMenu->ShouldShowMenu()) {
             glfwSetInputMode(windowManager->getWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(windowManager->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -200,7 +142,7 @@ void Renderer::processInput(float deltaTime)
     }
 
     // Only process camera movement when menu is not shown
-    if (!showImGuiMenu) {
+    if (!imguiMenu->ShouldShowMenu()) {
         // Handle movement input (WASD keys)
         if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
             cameraManager.processKeyboardInput(Camera::FORWARD, deltaTime);

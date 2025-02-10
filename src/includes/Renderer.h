@@ -20,6 +20,7 @@
 #include "Cameras/CameraConstant.h"
 #include "Cameras/CameraFPS.h"
 #include "Constants.h"
+#include "ImguiMenu.h"
 #include "InternalModel.h"
 #include "LightSource.h"
 #include "Perspectives/ProjectionManager.h"
@@ -33,7 +34,7 @@ class Renderer
 {
     public:
     Flashlight* flashlightModel;
-    bool showImGuiMenu = false;
+    std::unique_ptr<ImguiMenu> imguiMenu;
 
     //-----------------------------------------------------------------------------------
     // Constructor and Destructor
@@ -87,7 +88,7 @@ class Renderer
     //-----------------------------------------------------------------------------------
     // Input processing
     //-----------------------------------------------------------------------------------
-    void processInput(float deltaTime);
+    void processInput(float deltaTime) const;
 
     //-----------------------------------------------------------------------------------
     // Light source setup

@@ -35,7 +35,7 @@ class ImguiMenu
         ImGui::DestroyContext();
     }
 
-    void DisplayMenu(CameraManager cameraManager)
+    void DisplayMenu(CameraManager &cameraManager)
     {
         // Start ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -86,7 +86,9 @@ class ImguiMenu
 
     void HideMenu() { showImGuiMenu = false; }
 
-    bool GetMenuState() const { return showImGuiMenu; }
+    bool ShouldShowMenu() const { return showImGuiMenu; }
+
+    void toggleMenu() { showImGuiMenu = !showImGuiMenu; }
 
     private:
     ImGuiIO io;
