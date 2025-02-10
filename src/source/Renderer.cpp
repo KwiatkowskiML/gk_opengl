@@ -92,14 +92,14 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Geometry pass
-    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Load backpack model
+    // matrices setup
     glm::mat4 view             = cameraManager.getViewMatrix();
     const glm::mat4 projection = projectionManager.getProjectionMatrix();
     glm::mat4 model            = glm::mat4(1.0f);
+
+    // Geometry pass
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set shader for model
     gShader.use();
@@ -131,11 +131,21 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
         glDrawArrays(GL_TRIANGLES, 0, geometricalModel.vertices.size() / 6);
     }
 
+    // After finishing the geometry pass:
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);  // read from the G-buffer
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);        // draw to the default framebuffer
+    glBlitFramebuffer(
+        0, 0, windowWidth, windowHeight,  // source bounds
+        0, 0, windowWidth, windowHeight,  // destination bounds
+        GL_DEPTH_BUFFER_BIT,              // copy only depth buffer
+        GL_NEAREST
+    );
+
     // Switching back to default framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // Lightning pass
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     lightningPassShader.use();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -146,27 +156,31 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
 
     lightningPassShader.setupLightningUniforms(lightSource);
     lightningPassShader.setMat4("view", view);
+
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+
     renderQuad();
 
-    // Clear the depth buffer so that the skybox isn’t blocked.
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
-    // Render the skybox
-    // draw skybox as last
-    glDepthFunc(GL_LEQUAL
-    );  // change depth function so depth test passes when values are equal to depth buffer's content
+    // Set depth function so skybox fragments pass if their depth is equal to or greater than existing depth.
+    glDepthFunc(GL_LEQUAL);
+
+    // Use the skybox shader and set uniforms:
     skyboxShader.use();
-    view = glm::mat4(glm::mat3(cameraManager.getViewMatrix()));  // remove translation from the view matrix
-    skyboxShader.setMat4("view", view);
-    skyboxShader.setMat4("projection", projection);
+    glm::mat4 skyboxView = glm::mat4(glm::mat3(cameraManager.getViewMatrix()));  // remove translation
+    skyboxShader.setMat4("view", skyboxView);
+    skyboxShader.setMat4("projection", projectionManager.getProjectionMatrix());
 
-    // skybox cube
+    // Bind the skybox VAO and cubemap texture, then draw:
     glBindVertexArray(skybox.skyboxVAO);
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTextureID());
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glDepthFunc(GL_LESS);  // set depth function back to default
+
+    // Reset depth function if needed:
+    glDepthFunc(GL_LESS);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
