@@ -54,7 +54,6 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    (void)io;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -200,7 +199,7 @@ void Renderer::processInput(float deltaTime)
         tabPressed = false;
     }
 
-    // Only process camera movement and keyboard input when menu is not shown
+    // Only process camera movement when menu is not shown
     if (!showImGuiMenu) {
         // Handle movement input (WASD keys)
         if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_W) == GLFW_PRESS)
@@ -211,28 +210,6 @@ void Renderer::processInput(float deltaTime)
             cameraManager.processKeyboardInput(Camera::LEFT, deltaTime);
         if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_D) == GLFW_PRESS)
             cameraManager.processKeyboardInput(Camera::RIGHT, deltaTime);
-
-        // Handle camera type switching (1, 2, 3 keys)
-        if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_1) == GLFW_PRESS) {
-            if (cameraManager.getCurrentType() != FPS) {
-                std::cout << "Switching to FPS Camera\n";
-                cameraManager.switchCamera(FPS);
-            }
-        }
-
-        if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_2) == GLFW_PRESS) {
-            if (cameraManager.getCurrentType() != CONSTANT) {
-                std::cout << "Switching to Constant Camera\n";
-                cameraManager.switchCamera(CONSTANT);
-            }
-        }
-
-        if (glfwGetKey(windowManager->getWindow(), GLFW_KEY_3) == GLFW_PRESS) {
-            if (cameraManager.getCurrentType() != CIRCULAR) {
-                std::cout << "Switching to Circular Camera\n";
-                cameraManager.switchCamera(CIRCULAR);
-            }
-        }
     }
 }
 
