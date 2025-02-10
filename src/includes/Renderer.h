@@ -75,10 +75,13 @@ class Renderer
     unsigned int quadVBO;
 
     //-----------------------------------------------------------------------------------
-    // G-buffer setup
+    // G-buffer
     //-----------------------------------------------------------------------------------
     void setupGBuffer();
     void renderQuad();
+    void fillGBuffer(Shader& gShader);
+    void setupLightningPass(Shader& lightningPassShader);
+    void dispalySkybox(const Shader& skyboxShader, const SkyBox& skybox) const;
 
     //-----------------------------------------------------------------------------------
     // Input processing
