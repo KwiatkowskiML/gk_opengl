@@ -33,6 +33,7 @@ class Renderer
 {
     public:
     Flashlight* flashlightModel;
+    bool showImGuiMenu = false;
 
     //-----------------------------------------------------------------------------------
     // Constructor and Destructor

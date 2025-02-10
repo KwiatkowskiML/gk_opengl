@@ -51,6 +51,7 @@ target_link_libraries(${LIB_NAME}  PRIVATE
         glad
         libStb
         assimp
+        imgui
 )
 
 target_link_libraries(${EXEC_NAME} PRIVATE ${LIB_NAME})

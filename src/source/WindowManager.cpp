@@ -61,20 +61,23 @@ void WindowManager::mouse_callback(GLFWwindow *window, const double xpos, const 
     static float lastX     = WINDOW_WIDTH / 2.0f;
     static float lastY     = WINDOW_HEIGHT / 2.0f;
 
-    if (firstMouse) {
-        lastX      = xpos;
-        lastY      = ypos;
-        firstMouse = false;
-    }
+    // Retrieve the renderer instance
+    auto renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
 
-    // Calculate mouse movement offsets
-    float const xoffset = xpos - lastX;
-    float const yoffset = lastY - ypos;
-    lastX               = xpos;
-    lastY               = ypos;
+    // Do not process mouse movement if ImGui menu is shown
+    if (renderer && !renderer->showImGuiMenu) {
+        if (firstMouse) {
+            lastX      = xpos;
+            lastY      = ypos;
+            firstMouse = false;
+        }
 
-    // Retrieve the camera instance and process mouse movement to update camera orientation
-    if (const auto renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window))) {
+        // Calculate mouse movement offsets
+        float const xoffset = xpos - lastX;
+        float const yoffset = lastY - ypos;
+        lastX               = xpos;
+        lastY               = ypos;
+
         renderer->getCamera()->ProcessMouseMovement(xoffset, yoffset);
     }
 }
