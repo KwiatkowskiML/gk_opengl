@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <includes/SkyBox.h>
+#include <includes/Skybox/SkyBox.h>
 #include <filesystem>
 
 //-----------------------------------------------------------------------------------
@@ -27,7 +27,8 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       projectionManager(width, height, cameraManager.getZoom()),
       windowWidth(width),
       windowHeight(height),
-      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH))
+      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
+      skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices)
 {
     setupLightSource();
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
@@ -68,11 +69,6 @@ void Renderer::run()
     lightningPassShader.setInt("gNormal", 1);
     lightningPassShader.setInt("gAlbedoSpec", 2);
 
-    // skybox setup
-    SkyBox skybox(DAY_SKYBOX_FACES, skyboxVertices);
-    skyboxShader.use();
-    skyboxShader.setInt("skybox", 0);
-
     // Time variables
     float currentFrame = 0.0f;
     float lastFrame    = 0.0f;
@@ -86,12 +82,12 @@ void Renderer::run()
         lastFrame    = currentFrame;
 
         processInput(deltaTime);
-        render(gShader, lightningPassShader, skyboxShader, skybox);
+        render(gShader, lightningPassShader, skyboxShader);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyboxShader, SkyBox &skybox)
+void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyboxShader)
 {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,11 +99,11 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
     setupLightningPass(lightningPassShader);
 
     // Skybox rendering
-    dispalySkybox(skyboxShader, skybox);
+    dispalySkybox(skyboxShader, *skyboxManager.skybox);
 
     // display menu
     if (imguiMenu->ShouldShowMenu())
-        imguiMenu->DisplayMenu(cameraManager, projectionManager);
+        imguiMenu->DisplayMenu(cameraManager, projectionManager, skyboxManager);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
@@ -299,6 +295,7 @@ void Renderer::dispalySkybox(const Shader &skyboxShader, const SkyBox &skybox)
     skyboxShader.setMat4("projection", projectionManager.getPerspectiveProjection());
 
     // Bind the skybox VAO and cubemap texture, then draw:
+    glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(skybox.skyboxVAO);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTextureID());
     glDrawArrays(GL_TRIANGLES, 0, 36);

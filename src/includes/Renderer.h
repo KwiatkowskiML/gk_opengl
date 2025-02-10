@@ -25,10 +25,11 @@
 #include "LightSource.h"
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
-#include "SkyBox.h"
+#include "Skybox/SkyBox.h"
 #include "WindowManager.h"
 #include "includes/Models/Flashlight.h"
 #include "includes/Models/Model.h"
+#include "includes/Skybox/SkyBoxManager.h"
 
 class Renderer
 {
@@ -46,7 +47,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& gShader, Shader& lightningPassShader, Shader& skyboxShader, SkyBox& skybox);
+    void render(Shader& gShader, Shader& lightningPassShader, Shader& skyboxShader);
 
     //-----------------------------------------------------------------------------------
     // Getters
@@ -65,6 +66,7 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
+    SkyBoxManager skyboxManager;
 
     // G-buffer
     unsigned int gBuffer;

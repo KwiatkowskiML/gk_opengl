@@ -24,7 +24,9 @@ ImguiMenu::~ImguiMenu()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
-void ImguiMenu::DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager)
+void ImguiMenu::DisplayMenu(
+    CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyBoxManager
+)
 {
     // Start ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -63,6 +65,20 @@ void ImguiMenu::DisplayMenu(CameraManager &cameraManager, ProjectionManager &pro
                     break;
                 case 1:
                     projectionManager.switchProjection(ORTHOGONAL);
+                    break;
+            }
+        }
+
+        const char *skyboxTypes[]    = {"DAY", "NIGHT"};
+        static int currentSkyboxType = 0;
+
+        if (ImGui::Combo("Skybox Type", &currentSkyboxType, skyboxTypes, IM_ARRAYSIZE(skyboxTypes))) {
+            switch (currentSkyboxType) {
+                case 0:
+                    skyBoxManager.setDaySkybox();
+                    break;
+                case 1:
+                    skyBoxManager.setNightSkybox();
                     break;
             }
         }

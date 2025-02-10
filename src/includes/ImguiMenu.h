@@ -12,6 +12,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "Perspectives/ProjectionManager.h"
+#include "Skybox/SkyBoxManager.h"
 
 class ImguiMenu
 {
@@ -25,7 +26,7 @@ class ImguiMenu
     //-------------------------------------------------------------------------
     // Basic functionalities
     //-------------------------------------------------------------------------
-    void DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager);
+    void DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyboxManager);
 
     //-------------------------------------------------------------------------
     // Menu visibility

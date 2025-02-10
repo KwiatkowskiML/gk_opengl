@@ -38,6 +38,15 @@ const std::vector<std::string> DAY_SKYBOX_FACES = {
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/back.jpg"
 };
 
+const std::vector<std::string> NIGHT_SKYBOX_FACES = {
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightRight.png",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightLeft.png",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightTop.png",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightBottom.png",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightFront.png",
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightBack.png"
+};
+
 constexpr float cubeVertices[] = {
     // positions          // normal vectors
     -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f,
