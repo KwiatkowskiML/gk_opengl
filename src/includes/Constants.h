@@ -142,9 +142,11 @@ constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
 constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
 
+constexpr glm::vec3 BACKPACK_POSITION(2.0f, 2.0f, -2.0f);
+
 constexpr glm::vec3 FLASHLIGHT_SHIFT(0.09f, -0.1f, -0.3f);
-constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(0.09f, -0.1f, 2.7f);
-constexpr glm::vec3 FLASHLIGHT_SCALE(0.08f, 0.08f, 0.08f);
+constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, 2.0f, 1.0f);
+constexpr glm::vec3 FLASHLIGHT_SCALE(0.2f, 0.2f, 0.2f);
 
 constexpr glm::vec3 OBJECT_COLOR(1.0f, 0.5f, 0.31f);
 

@@ -22,7 +22,7 @@
 #include "Constants.h"
 #include "ImguiMenu.h"
 #include "InternalModel.h"
-#include "LightSource.h"
+#include "Lights/LightSource.h"
 #include "Perspectives/ProjectionManager.h"
 #include "Shader.h"
 #include "Skybox/SkyBox.h"

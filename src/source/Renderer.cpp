@@ -221,12 +221,15 @@ void Renderer::fillGBuffer(Shader &gShader)
 
     // Set the model matrix for the backpack
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(2.0f, 2.0f, -2.0f));
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    model = glm::translate(model, BACKPACK_POSITION);
     gShader.setMat4("model", model);
 
     // Draw backpack model
     backpackModel.Draw(gShader);
+
+    model = flashlightModel->getModelMatrix();
+    gShader.setMat4("model", model);
+    flashlightModel->Draw(gShader);
 
     // Draw other models
     gShader.setBool("useTexture", false);
@@ -271,7 +274,7 @@ void Renderer::setupLightningPass(Shader &lightningPassShader)
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, gColorSpec);
 
-    lightningPassShader.setupLightningUniforms(lightSource);
+    lightningPassShader.setupLightningUniforms(lightSource, flashlightModel->spotLight);
     lightningPassShader.setMat4("view", view);
 
     glDepthMask(GL_FALSE);

@@ -7,22 +7,48 @@
 
 #include "includes/Cameras/Camera.h"
 #include "includes/Constants.h"
+#include "includes/Lights/SpotLight.h"
 #include "includes/Models/Model.h"
 
 class Flashlight : public NewModel
 {
     public:
+    // Flashlight properties
+    SpotLight spotLight;
+
     //-----------------------------------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------------------------------
-    Flashlight(string const &path, unsigned int flags) : NewModel(path, flags) {}
+    Flashlight(string const &path, unsigned int flags) : NewModel(path, flags)
+    {
+        spotLight.position = INITIAL_FLASHLIGHT_POSITION;
+        spotLight.color    = glm::vec3(1.0f, 1.0f, 1.0f);
+
+        spotLight.constant  = 1.0f;
+        spotLight.linear    = 0.09f;
+        spotLight.quadratic = 0.032f;
+
+        spotLight.direction   = glm::vec3(0.0f, 0.0f, -1.0f);
+        spotLight.cutOff      = glm::cos(glm::radians(12.5f));
+        spotLight.outerCutOff = glm::cos(glm::radians(15.0f));
+    }
 
     //-----------------------------------------------------------------------------------
     // Draw the flashlight model
     //-----------------------------------------------------------------------------------
     void Draw(Shader &shader) const { NewModel::Draw(shader); }
 
-    glm::mat4 getModelMatrix(const Camera &camera) const
+    // Get model matrix
+    glm::mat4 getModelMatrix() const
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, INITIAL_FLASHLIGHT_POSITION);
+        model           = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model           = glm::scale(model, FLASHLIGHT_SCALE);
+        return model;
+    }
+
+    glm::mat4 getModelMatrix2(const Camera &camera) const
     {
         glm::mat4 modelMatrix = glm::mat4(1.0f);
 

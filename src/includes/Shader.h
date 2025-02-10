@@ -5,7 +5,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "LightSource.h"
+#include "Lights/LightSource.h"
+#include "Lights/SpotLight.h"
 
 #include <glad/glad.h>
 #include <fstream>
@@ -40,7 +41,7 @@ class Shader
     //-----------------------------------------------------------------------------------
     // Setup uniform values
     //-----------------------------------------------------------------------------------
-    void setupLightningUniforms(const LightSource &lightSource);
+    void setupLightningUniforms(const LightSource &lightSource, const SpotLight &spot_light) const;
 
     private:
     //-----------------------------------------------------------------------------------

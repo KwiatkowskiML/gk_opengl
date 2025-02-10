@@ -7,7 +7,8 @@
 
 #include <glm/glm.hpp>
 
-struct LightSource {
+class LightSource {
+    public:
     glm::vec3 position;
     glm::vec3 color;
 

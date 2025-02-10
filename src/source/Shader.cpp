@@ -55,7 +55,7 @@ void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
 }
 
-void Shader::setupLightningUniforms(const LightSource &lightSource)
+void Shader::setupLightningUniforms(const LightSource &lightSource, const SpotLight &spot_light) const
 {
     setVec3("light.position", lightSource.position);
     setVec3("light.color", lightSource.color);
@@ -65,6 +65,15 @@ void Shader::setupLightningUniforms(const LightSource &lightSource)
     setFloat("phongProperties.ambientStrength", BASIC_AMBIENT_STRENGTH);
     setFloat("phongProperties.shininess", BASIC_SHININESS);
     setFloat("phongProperties.specularStrength", BASIC_SPECULAR_STRENGTH);
+
+    setVec3("spotLight.position", spot_light.position);
+    setVec3("spotLight.color", spot_light.color);
+    setVec3("spotLight.direction", spot_light.direction);
+    setFloat("spotLight.cutOff", spot_light.cutOff);
+    setFloat("spotLight.outerCutOff", spot_light.outerCutOff);
+    setFloat("spotLight.constant", spot_light.constant);
+    setFloat("spotLight.linear", spot_light.linear);
+    setFloat("spotLight.quadratic", spot_light.quadratic);
 }
 
 std::string Shader::readShaderFile(const std::string &filePath)
