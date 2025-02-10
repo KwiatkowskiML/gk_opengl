@@ -264,6 +264,10 @@ void Renderer::setupLightningPass(Shader &lightningPassShader)
     // Lightning pass
     glClear(GL_COLOR_BUFFER_BIT);
     lightningPassShader.use();
+    lightningPassShader.setVec3("fogProperties.color", glm::vec3(0.5f, 0.5f, 0.5f));  // Gray fog
+    lightningPassShader.setFloat("fogProperties.density", 0.1f);                      // Adjust density
+    lightningPassShader.setFloat("fogProperties.start", 10.0f);                       // Start of fog
+    lightningPassShader.setFloat("fogProperties.end", 100.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE1);
