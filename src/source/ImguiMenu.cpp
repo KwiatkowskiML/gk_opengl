@@ -91,22 +91,32 @@ void ImguiMenu::DisplayMenu(
         ImGui::Text("Flashlight Position");
 
         // Create temporary variables to hold the position values
-        glm::vec3 tempPosition = flashlight->position;
+        glm::vec3 tempPosition = flashlight->getPosition();
 
         // Add sliders for X, Y, and Z positions
         if (ImGui::SliderFloat("X Position", &tempPosition.x, -10.0f, 10.0f, "%.2f") ||
             ImGui::SliderFloat("Y Position", &tempPosition.y, -10.0f, 10.0f, "%.2f") ||
             ImGui::SliderFloat("Z Position", &tempPosition.z, -10.0f, 10.0f, "%.2f")) {
-            // Update both the flashlight position and its spotlight position
-            flashlight->position           = tempPosition;
-            flashlight->spotLight.position = tempPosition;
+            flashlight->setPosition(tempPosition);
         }
 
         // Display current position values
-        ImGui::Text(
-            "Current flashlight position: (%.2f, %.2f, %.2f)", flashlight->position.x, flashlight->position.y,
-            flashlight->position.z
-        );
+        ImGui::Text("Current flashlight position: (%.2f, %.2f, %.2f)", tempPosition.x, tempPosition.y, tempPosition.z);
+
+        ImGui::Separator();
+
+        // Rotation controls
+        if (ImGui::TreeNode("Rotation")) {
+            glm::vec3 tempRotation = flashlight->getRotation();
+
+            if (ImGui::SliderFloat("Pitch (X)", &tempRotation.x, -90.0f, 90.0f, "%.1f°") ||
+                ImGui::SliderFloat("Yaw (Y)", &tempRotation.y, -180.0f, 180.0f, "%.1f°")) {
+                flashlight->setRotation(tempRotation);
+            }
+
+            ImGui::Text("Current rotation: Pitch: %.1f°, Yaw: %.1f°", tempRotation.x, tempRotation.y);
+            ImGui::TreePop();
+        }
 
         ImGui::Separator();
 

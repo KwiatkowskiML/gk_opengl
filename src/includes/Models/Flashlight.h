@@ -15,12 +15,12 @@ class Flashlight : public NewModel
     public:
     // Flashlight properties
     SpotLight spotLight;
-    glm::vec3 position;
 
     //-----------------------------------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------------------------------
-    Flashlight(string const &path, unsigned int flags) : NewModel(path, flags), position(INITIAL_FLASHLIGHT_POSITION)
+    Flashlight(string const &path, unsigned int flags)
+        : NewModel(path, flags), position(INITIAL_FLASHLIGHT_POSITION), rotation(glm::vec3(0.0f, 0.0f, 0.0f))
     {
         spotLight.position = INITIAL_FLASHLIGHT_POSITION;
         spotLight.color    = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -39,53 +39,69 @@ class Flashlight : public NewModel
     //-----------------------------------------------------------------------------------
     void Draw(Shader &shader) const { NewModel::Draw(shader); }
 
-    // Get model matrix
+    //-----------------------------------------------------------------------------------
+    // Getters
+    //-----------------------------------------------------------------------------------
     glm::mat4 getModelMatrix() const
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, position);
-        model           = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model           = glm::scale(model, FLASHLIGHT_SCALE);
+
+        // Translate the model to the flashlight position
+        model = glm::translate(model, position);
+
+        // Rotate the model to face the same direction as the camera
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // Apply y and x rotations
+        model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        // scale the model
+        model = glm::scale(model, FLASHLIGHT_SCALE);
         return model;
     }
 
-    glm::mat4 getModelMatrix2(const Camera &camera) const
+    glm::vec3 getPosition() const { return position; }
+    glm::vec3 getRotation() const { return rotation; }
+
+    //-----------------------------------------------------------------------------------
+    // Setters
+    //-----------------------------------------------------------------------------------
+    void setPosition(const glm::vec3 &newPosition)
     {
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        position           = newPosition;
+        spotLight.position = newPosition;
+    }
 
-        // Calculate camera orientation vectors
-        glm::vec3 cameraRight = glm::normalize(glm::cross(camera.Front, camera.WorldUp));
-        glm::vec3 cameraUp    = glm::normalize(glm::cross(cameraRight, camera.Front));
+    void setRotation(const glm::vec3 &newRotation)
+    {
+        rotation = newRotation;
+        updateSpotLightDirection();
+    }
 
-        // Create rotation matrix based on camera orientation
-        glm::mat4 rotationMatrix = glm::mat4(
-            glm::vec4(cameraRight, 0.0f), glm::vec4(cameraUp, 0.0f),
-            glm::vec4(-camera.Front, 0.0f),  // Negative because OpenGL is right-handed
-            glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
-        );
+    private:
+    //-----------------------------------------------------------------------------------
+    // Private functions
+    //-----------------------------------------------------------------------------------
+    glm::vec3 position;
+    glm::vec3 rotation;
 
-        // Calculate the pivot point (the light end of the flashlight)
-        // This should be adjusted based on your model's dimensions
-        glm::vec3 pivotOffset = glm::vec3(0.0f, 0.0f, 100 * 0.5f);  // Adjust FLASHLIGHT_LENGTH as needed
+    void updateSpotLightDirection()
+    {
+        // Start with base direction
+        glm::vec3 baseDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 
-        // 1. Translate to camera position + base offset
-        modelMatrix = glm::translate(modelMatrix, camera.Position + FLASHLIGHT_SHIFT);
+        // Create rotation matrices
+        glm::mat4 rotationMatrix = glm::mat4(1.0f);
 
-        // 2. Apply rotation
-        modelMatrix = modelMatrix * rotationMatrix;
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        // 3. Apply scale
-        modelMatrix = glm::scale(modelMatrix, FLASHLIGHT_SCALE);
+        // Transform the base direction by the rotation matrix
+        glm::vec4 rotatedDirection = rotationMatrix * glm::vec4(baseDirection, 0.0f);
 
-        // 4. Apply fixed model rotation
-        modelMatrix = glm::rotate(modelMatrix, glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // 5. Adjust position to maintain pivot point
-        // Translate to pivot point, rotate, then translate back
-        modelMatrix = glm::translate(modelMatrix, pivotOffset);
-        modelMatrix = glm::translate(modelMatrix, -pivotOffset);
-
-        return modelMatrix;
+        // Update spotlight direction
+        spotLight.direction = glm::normalize(glm::vec3(rotatedDirection));
     }
 };
 
