@@ -103,7 +103,7 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
 
     // display menu
     if (imguiMenu->ShouldShowMenu())
-        imguiMenu->DisplayMenu(cameraManager, projectionManager, skyboxManager);
+        imguiMenu->DisplayMenu(cameraManager, projectionManager, skyboxManager, flashlightModel);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();

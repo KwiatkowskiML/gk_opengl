@@ -140,7 +140,7 @@ constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
-constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
+constexpr glm::vec3 LIGHT_POS(5.0f, 5.0f, 5.0f);
 
 constexpr glm::vec3 BACKPACK_POSITION(2.0f, 2.0f, -2.0f);
 

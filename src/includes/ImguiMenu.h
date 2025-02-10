@@ -6,6 +6,7 @@
 #define IMGUIMENU_H
 
 #include "CameraManager.h"
+#include "Models/Flashlight.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -26,7 +27,10 @@ class ImguiMenu
     //-------------------------------------------------------------------------
     // Basic functionalities
     //-------------------------------------------------------------------------
-    void DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyboxManager);
+    void DisplayMenu(
+        CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyboxManager,
+        Flashlight *flashlightModel
+    );
 
     //-------------------------------------------------------------------------
     // Menu visibility

@@ -4,6 +4,8 @@
 
 #include "includes/ImguiMenu.h"
 
+#include <includes/Models/Flashlight.h>
+
 ImguiMenu::ImguiMenu(GLFWwindow *window)
 {
     IMGUI_CHECKVERSION();
@@ -25,7 +27,8 @@ ImguiMenu::~ImguiMenu()
     ImGui::DestroyContext();
 }
 void ImguiMenu::DisplayMenu(
-    CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyBoxManager
+    CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyBoxManager,
+    Flashlight *flashlight
 )
 {
     // Start ImGui frame
@@ -82,6 +85,30 @@ void ImguiMenu::DisplayMenu(
                     break;
             }
         }
+
+        // Flashlight Position Controls
+        ImGui::Separator();
+        ImGui::Text("Flashlight Position");
+
+        // Create temporary variables to hold the position values
+        glm::vec3 tempPosition = flashlight->position;
+
+        // Add sliders for X, Y, and Z positions
+        if (ImGui::SliderFloat("X Position", &tempPosition.x, -10.0f, 10.0f, "%.2f") ||
+            ImGui::SliderFloat("Y Position", &tempPosition.y, -10.0f, 10.0f, "%.2f") ||
+            ImGui::SliderFloat("Z Position", &tempPosition.z, -10.0f, 10.0f, "%.2f")) {
+            // Update both the flashlight position and its spotlight position
+            flashlight->position           = tempPosition;
+            flashlight->spotLight.position = tempPosition;
+        }
+
+        // Display current position values
+        ImGui::Text(
+            "Current flashlight position: (%.2f, %.2f, %.2f)", flashlight->position.x, flashlight->position.y,
+            flashlight->position.z
+        );
+
+        ImGui::Separator();
 
         // Additional menu options can be added here
         ImGui::Text("Press TAB to toggle this menu");

@@ -48,7 +48,7 @@ void main()
 {
     vec3 pointLightning = CalcPointLight(light);
     vec3 spotLightning = CalcSpotLight(spotLight);
-    FragColor = vec4(spotLightning, 1.0);
+    FragColor = vec4(pointLightning + spotLightning, 1.0);
 }
 
 vec3 CalcPointLight(Light light)
@@ -124,7 +124,7 @@ vec3 CalcSpotLight(SpotLight light)
     vec3 diffuse = diff * light.color * Diffuse;
     vec3 specular = spec * light.color *  Specular;
 
-    ambient  *= attenuation * intensity;
+    ambient  *= attenuation;
     diffuse  *= attenuation * intensity;
     specular *= attenuation * intensity;
 

@@ -15,11 +15,12 @@ class Flashlight : public NewModel
     public:
     // Flashlight properties
     SpotLight spotLight;
+    glm::vec3 position;
 
     //-----------------------------------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------------------------------
-    Flashlight(string const &path, unsigned int flags) : NewModel(path, flags)
+    Flashlight(string const &path, unsigned int flags) : NewModel(path, flags), position(INITIAL_FLASHLIGHT_POSITION)
     {
         spotLight.position = INITIAL_FLASHLIGHT_POSITION;
         spotLight.color    = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -42,7 +43,7 @@ class Flashlight : public NewModel
     glm::mat4 getModelMatrix() const
     {
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, INITIAL_FLASHLIGHT_POSITION);
+        model           = glm::translate(model, position);
         model           = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model           = glm::scale(model, FLASHLIGHT_SCALE);
         return model;
