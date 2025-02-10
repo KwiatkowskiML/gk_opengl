@@ -24,7 +24,7 @@ ImguiMenu::~ImguiMenu()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
-void ImguiMenu::DisplayMenu(CameraManager &cameraManager)
+void ImguiMenu::DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager)
 {
     // Start ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -49,6 +49,20 @@ void ImguiMenu::DisplayMenu(CameraManager &cameraManager)
                     break;
                 case 2:
                     cameraManager.switchCamera(CIRCULAR);
+                    break;
+            }
+        }
+
+        const char *projectionTypes[]    = {"PERSPECTIVE", "ORTHOGONAL"};
+        static int currentProjectionType = 0;
+
+        if (ImGui::Combo("Projection Type", &currentProjectionType, projectionTypes, IM_ARRAYSIZE(projectionTypes))) {
+            switch (currentProjectionType) {
+                case 0:
+                    projectionManager.switchProjection(PERSPECTIVE);
+                    break;
+                case 1:
+                    projectionManager.switchProjection(ORTHOGONAL);
                     break;
             }
         }

@@ -30,6 +30,7 @@ class ProjectionManager
     // Getters
     //-----------------------------------------------------------------------------------
     glm::mat4 getProjectionMatrix() const;
+    glm::mat4 getPerspectiveProjection();
 
     private:
     //-----------------------------------------------------------------------------------

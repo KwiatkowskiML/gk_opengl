@@ -11,6 +11,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "Perspectives/ProjectionManager.h"
+
 class ImguiMenu
 {
     public:
@@ -23,7 +25,7 @@ class ImguiMenu
     //-------------------------------------------------------------------------
     // Basic functionalities
     //-------------------------------------------------------------------------
-    void DisplayMenu(CameraManager &cameraManager);
+    void DisplayMenu(CameraManager &cameraManager, ProjectionManager &projectionManager);
 
     //-------------------------------------------------------------------------
     // Menu visibility

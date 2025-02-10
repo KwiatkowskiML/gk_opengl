@@ -83,7 +83,7 @@ class Renderer
     void renderQuad();
     void fillGBuffer(Shader& gShader);
     void setupLightningPass(Shader& lightningPassShader);
-    void dispalySkybox(const Shader& skyboxShader, const SkyBox& skybox) const;
+    void dispalySkybox(const Shader& skyboxShader, const SkyBox& skybox);
 
     //-----------------------------------------------------------------------------------
     // Input processing

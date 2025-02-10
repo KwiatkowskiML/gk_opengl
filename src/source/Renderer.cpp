@@ -107,7 +107,7 @@ void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyb
 
     // display menu
     if (imguiMenu->ShouldShowMenu())
-        imguiMenu->DisplayMenu(cameraManager);
+        imguiMenu->DisplayMenu(cameraManager, projectionManager);
 
     glfwSwapBuffers(windowManager->getWindow());
     glfwPollEvents();
@@ -287,7 +287,7 @@ void Renderer::setupLightningPass(Shader &lightningPassShader)
     glDepthMask(GL_TRUE);
 }
 
-void Renderer::dispalySkybox(const Shader &skyboxShader, const SkyBox &skybox) const
+void Renderer::dispalySkybox(const Shader &skyboxShader, const SkyBox &skybox)
 {
     // Set depth function so skybox fragments pass if their depth is equal to or greater than existing depth.
     glDepthFunc(GL_LEQUAL);
@@ -296,7 +296,7 @@ void Renderer::dispalySkybox(const Shader &skyboxShader, const SkyBox &skybox) c
     skyboxShader.use();
     const glm::mat4 skyboxView = glm::mat4(glm::mat3(cameraManager.getViewMatrix()));  // remove translation
     skyboxShader.setMat4("view", skyboxView);
-    skyboxShader.setMat4("projection", projectionManager.getProjectionMatrix());
+    skyboxShader.setMat4("projection", projectionManager.getPerspectiveProjection());
 
     // Bind the skybox VAO and cubemap texture, then draw:
     glBindVertexArray(skybox.skyboxVAO);

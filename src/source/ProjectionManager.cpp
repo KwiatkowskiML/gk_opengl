@@ -2,8 +2,8 @@
 // Created by michal on 2/1/25.
 //
 
-#include "includes/Perspectives/ProjectionFactory.h"
 #include "includes/Perspectives/ProjectionManager.h"
+#include "includes/Perspectives/ProjectionFactory.h"
 
 ProjectionManager::ProjectionManager(int windowWidth, int windowHeight, float zoom, float zNear, float zFar)
 {
@@ -31,3 +31,9 @@ void ProjectionManager::switchProjection(ProjectionType type)
 }
 
 glm::mat4 ProjectionManager::getProjectionMatrix() const { return currentProjection->getProjectionMatrix(); }
+glm::mat4 ProjectionManager::getPerspectiveProjection()
+{
+    std::unique_ptr<Projection> perspectiveProjection =
+        projectionFactories[ProjectionType::PERSPECTIVE]->createProjection();
+    return perspectiveProjection->getProjectionMatrix();
+}
