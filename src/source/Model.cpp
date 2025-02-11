@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------------
 // Utility function to load a texture from file
 //-----------------------------------------------------------------------------------
-unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
+unsigned int TextureFromFile(const char *path, const string &directory)
 {
     string filename = string(path);
 
@@ -177,7 +177,7 @@ vector<Texture> NewModel::loadMaterialTextures(aiMaterial *mat, aiTextureType ty
         // if texture hasn't been loaded already, load it
         if (!skip) {
             Texture texture;
-            texture.id   = TextureFromFile(str.C_Str(), this->directory, false);
+            texture.id   = TextureFromFile(str.C_Str(), this->directory);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);

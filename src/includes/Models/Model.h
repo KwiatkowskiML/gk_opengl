@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------------
 // Utility function to load a texture from file
 //-----------------------------------------------------------------------------------
-inline unsigned int TextureFromFile(const char *path, const string &directory, bool gamma);
+inline unsigned int TextureFromFile(const char *path, const string &directory);
 
 class NewModel
 {
@@ -26,17 +26,12 @@ class NewModel
     vector<Texture> texturesLoaded;
     vector<Mesh> meshes;
     string directory;
-    bool gammaCorrection;
     unsigned int pFlags;
 
     //-----------------------------------------------------------------------------------
     // Constructor: expects a file path to a 3D model
     //-----------------------------------------------------------------------------------
-    NewModel(string const &path, unsigned int pFlags = aiProcess_Triangulate, const bool gamma = false)
-        : pFlags(pFlags), gammaCorrection(gamma)
-    {
-        loadModel(path);
-    }
+    NewModel(string const &path, unsigned int pFlags = aiProcess_Triangulate) : pFlags(pFlags) { loadModel(path); }
 
     //-----------------------------------------------------------------------------------
     // Draw the model
