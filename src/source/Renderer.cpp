@@ -8,6 +8,7 @@
 #include <imgui_impl_opengl3.h>
 #include <includes/Skybox/SkyBox.h>
 #include <filesystem>
+#include <numbers>
 
 //-----------------------------------------------------------------------------------
 // Constructor and destructor
@@ -26,8 +27,8 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       windowHeight(height),
       windowManager(std::make_unique<WindowManager>(width, height)),
       projectionManager(width, height, cameraManager.getZoom()),
-      backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
-      italyMap(std::filesystem::path(ITALY_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate),
+      backpackModel(BACKPACK_MODEL_PATH),
+      italyMap(ITALY_MODEL_PATH, aiProcess_FlipUVs | aiProcess_Triangulate),
       skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices),
       flashlightModel(std::make_unique<Flashlight>(FLASHLIGHT_MODEL_PATH, aiProcess_FlipUVs | aiProcess_Triangulate)),
       pointLights(NR_POINT_LIGHTS)
@@ -394,13 +395,14 @@ void Renderer::addSphere(const glm::vec3 &position, const glm::vec3 &color, floa
     std::vector<float> vertices;
     const float lengthInv = 1.0f / radius;  // For normal calculation
 
-    float sectorStep = 2 * M_PI / SPHERE_SECTORS;
-    float stackStep  = M_PI / SPHERE_STACKS;
+    float pi = std::numbers::pi_v<float>;
+    float sectorStep = 2 * pi / SPHERE_SECTORS;
+    float stackStep  = pi / SPHERE_STACKS;
     float sectorAngle, stackAngle;
 
     // Generate vertices for each stack and sector
     for (unsigned int i = 0; i <= SPHERE_STACKS; ++i) {
-        stackAngle = M_PI / 2 - i * stackStep;   // Starting from pi/2 to -pi/2
+        stackAngle = pi / 2 - i * stackStep;   // Starting from pi/2 to -pi/2
         float xy   = radius * cosf(stackAngle);  // r * cos(u)
         float z    = radius * sinf(stackAngle);  // r * sin(u)
 

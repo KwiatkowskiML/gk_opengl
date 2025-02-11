@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 // Shader paths
 //------------------------------------------------------------------------------
-const std::string PATH_PREFIX = "../../";
+const std::string PATH_PREFIX = "../";
 
 const std::string GBUFFER_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/gbuffer_vertex_shader.glsl";
 const std::string GBUFFER_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/gbuffer_fragment_shader.glsl";

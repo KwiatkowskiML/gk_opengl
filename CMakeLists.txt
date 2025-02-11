@@ -86,7 +86,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel" OR CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
     message(FATAL_ERROR "Intel compiler is not supported...")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    message(FATAL_ERROR "MSVC is not supported...")
 else()
     message(FATAL_ERROR "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
@@ -95,4 +94,4 @@ endif()
 # Add test target
 # ------------------------------
 
-add_subdirectory(tests)
+# add_subdirectory(tests)

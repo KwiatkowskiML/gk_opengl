@@ -52,6 +52,21 @@ target_link_libraries(${LIB_NAME}  PRIVATE
         libStb
         assimp
         imgui
+        glm-header-only
 )
 
 target_link_libraries(${EXEC_NAME} PRIVATE ${LIB_NAME})
+
+# -----------------------------
+# Copy resources
+# -----------------------------
+
+add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/resources ${PROJECT_BINARY_DIR}/resources
+    COMMENT "Copying shaders")
+
+add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/src/shaders ${PROJECT_BINARY_DIR}/src/shaders
+    COMMENT "Copying models")

@@ -3,6 +3,7 @@
 //
 
 #include "includes/CameraManager.h"
+#include <stdexcept>
 
 CameraManager::CameraManager()
 {
