@@ -35,7 +35,7 @@ class OrthogonalProjection : public Projection
 
     private:
     // Scale factor for the orthographic view; adjust as needed
-    float orthoScale = 1.0f;
+    float orthoScale = 3.0f;
 };
 
 #endif  // PROJECTIONORTHOGONAL_H
