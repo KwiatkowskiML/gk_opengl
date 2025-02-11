@@ -36,6 +36,9 @@ struct PhongProperties{
     float shininess;
 };
 
+#define MAX_POINT_LIGHTS 16
+uniform Light pointLights[MAX_POINT_LIGHTS];
+
 uniform Light light;
 uniform SpotLight spotLight;
 uniform PhongProperties phongProperties;
@@ -46,10 +49,14 @@ vec3 CalcSpotLight(SpotLight light);
 
 void main()
 {
+    vec3 result = vec3(0.0);
     vec3 pointLightning = CalcPointLight(light);
     vec3 spotLightning = CalcSpotLight(spotLight);
-    FragColor = vec4(pointLightning + spotLightning, 1.0);
-    //FragColor = vec4(texture(gAlbedoSpec, TexCoords).rgb, 1.0);
+
+    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
+        result += CalcPointLight(pointLights[i]);
+
+    FragColor = vec4(result + spotLightning + pointLightning, 1.0);
 }
 
 vec3 CalcPointLight(Light light)

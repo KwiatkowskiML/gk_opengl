@@ -68,6 +68,7 @@ class Renderer
     NewModel backpackModel;
     NewModel italyMap;
     SkyBoxManager skyboxManager;
+    std::vector<LightSource> pointLights;
 
     // G-buffer
     unsigned int gBuffer;
@@ -97,6 +98,7 @@ class Renderer
     // Light source setup
     //-----------------------------------------------------------------------------------
     void setupLightSource();
+    void setupPointLights();
 
     //-----------------------------------------------------------------------------------
     // Add model

@@ -143,14 +143,30 @@ constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
-constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
 
-constexpr glm::vec3 BACKPACK_POSITION(2.0f, -1.0f, -2.0f);
+//------------------------------------------------------------------------------
+// Light source properties
+//------------------------------------------------------------------------------
+constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
+constexpr glm::vec3 LIGHT_COLOR(1.0f, 1.0f, 1.0f);
+constexpr float LIGHT_CONSTANT  = 1.0f;
+constexpr float LIGHT_LINEAR    = 0.09f;
+constexpr float LIGHT_QUADRATIC = 0.032f;
+
+constexpr float LIGHT_X_LOWER_BOUND = -20.0f;
+constexpr float LIGHT_X_UPPER_BOUND = 20.0f;
+constexpr float LIGHT_Y_LOWER_BOUND = -5.0f;
+constexpr float LIGHT_Y_UPPER_BOUND = 10.0f;
+constexpr float LIGHT_Z_LOWER_BOUND = -100.0f;
+constexpr float LIGHT_Z_UPPER_BOUND = 10.0f;
 
 constexpr glm::vec3 FLASHLIGHT_SHIFT(0.09f, -0.1f, -0.3f);
-constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, -1.0f, 1.0f);
+constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, -1.0f, 2.0f);
 constexpr glm::vec3 FLASHLIGHT_SCALE(0.2f, 0.2f, 0.2f);
 
+constexpr glm::vec3 BACKPACK_POSITION(2.0f, -1.0f, -2.0f);
 constexpr glm::vec3 OBJECT_COLOR(1.0f, 0.5f, 0.31f);
+
+constexpr int NR_POINT_LIGHTS = 16;
 
 #endif  // CONSTANTS_H

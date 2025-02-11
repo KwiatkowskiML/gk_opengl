@@ -29,9 +29,12 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       windowHeight(height),
       backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
       italyMap(std::filesystem::path(ITALY_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate),
-      skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices)
+      skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices),
+      pointLights(NR_POINT_LIGHTS)
 {
     setupLightSource();
+    setupPointLights();
+
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
     flashlightModel =
         new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
@@ -124,7 +127,6 @@ void Renderer::processInput(float deltaTime) const
 
     // Detect key press (from not pressed to pressed)
     if (tabState == GLFW_PRESS && !tabPressed) {
-        std::cout << "Toggling ImGui menu" << std::endl;
         imguiMenu->toggleMenu();
         tabPressed = true;  // Set flag to prevent repeated toggles
 
@@ -291,7 +293,7 @@ void Renderer::setupLightningPass(Shader &lightningPassShader)
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, gColorSpec);
 
-    lightningPassShader.setupLightningUniforms(lightSource, flashlightModel->spotLight);
+    lightningPassShader.setupLightningUniforms(lightSource, flashlightModel->spotLight, pointLights);
     lightningPassShader.setMat4("view", view);
 
     glDepthMask(GL_FALSE);
@@ -491,8 +493,33 @@ void Renderer::addSphere(const glm::vec3 &position, const glm::vec3 &color, floa
 void Renderer::setupLightSource()
 {
     lightSource.position  = LIGHT_POS;
-    lightSource.color     = glm::vec3(1.0f, 1.0f, 1.0f);
-    lightSource.constant  = 1.0f;
-    lightSource.linear    = 0.09f;
-    lightSource.quadratic = 0.032f;
+    lightSource.color     = LIGHT_COLOR;
+    lightSource.constant  = LIGHT_CONSTANT;
+    lightSource.linear    = LIGHT_LINEAR;
+    lightSource.quadratic = LIGHT_QUADRATIC;
+}
+
+void Renderer::setupPointLights()
+{
+    // Seed the random generator once
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+        const float x =
+            LIGHT_X_LOWER_BOUND + static_cast<float>(std::rand()) /
+                                      (static_cast<float>(RAND_MAX / (LIGHT_X_UPPER_BOUND - LIGHT_X_LOWER_BOUND)));
+        const float y =
+            LIGHT_Y_LOWER_BOUND + static_cast<float>(std::rand()) /
+                                      (static_cast<float>(RAND_MAX / (LIGHT_Y_UPPER_BOUND - LIGHT_Y_LOWER_BOUND)));
+        const float z =
+            LIGHT_Z_LOWER_BOUND + static_cast<float>(std::rand()) /
+                                      (static_cast<float>(RAND_MAX / (LIGHT_Z_UPPER_BOUND - LIGHT_Z_LOWER_BOUND)));
+        glm::vec3 position = glm::vec3(x, y, z);
+
+        pointLights[i].position  = position;
+        pointLights[i].color     = LIGHT_COLOR;
+        pointLights[i].constant  = LIGHT_CONSTANT;
+        pointLights[i].linear    = LIGHT_LINEAR;
+        pointLights[i].quadratic = LIGHT_QUADRATIC;
+    }
 }

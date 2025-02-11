@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 class Shader
 {
@@ -41,7 +42,9 @@ class Shader
     //-----------------------------------------------------------------------------------
     // Setup uniform values
     //-----------------------------------------------------------------------------------
-    void setupLightningUniforms(const LightSource &lightSource, const SpotLight &spot_light) const;
+    void setupLightningUniforms(
+        const LightSource &lightSource, const SpotLight &spot_light, const std::vector<LightSource> &pointLights
+    ) const;
 
     private:
     //-----------------------------------------------------------------------------------

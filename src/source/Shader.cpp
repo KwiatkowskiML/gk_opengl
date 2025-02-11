@@ -3,8 +3,9 @@
 //
 
 #include "includes/Shader.h"
-
 #include <includes/Constants.h>
+#include <cstdlib>
+#include <ctime>
 
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
 {
@@ -55,7 +56,9 @@ void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
     glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, glm::value_ptr(value));
 }
 
-void Shader::setupLightningUniforms(const LightSource &lightSource, const SpotLight &spot_light) const
+void Shader::setupLightningUniforms(
+    const LightSource &lightSource, const SpotLight &spot_light, const std::vector<LightSource> &pointLights
+) const
 {
     setVec3("light.position", lightSource.position);
     setVec3("light.color", lightSource.color);
@@ -74,6 +77,14 @@ void Shader::setupLightningUniforms(const LightSource &lightSource, const SpotLi
     setFloat("spotLight.constant", spot_light.constant);
     setFloat("spotLight.linear", spot_light.linear);
     setFloat("spotLight.quadratic", spot_light.quadratic);
+
+    for (int i = 0; i < NR_POINT_LIGHTS; ++i) {
+        setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
+        setVec3("pointLights[" + std::to_string(i) + "].color", pointLights[i].color);
+        setFloat("pointLights[" + std::to_string(i) + "].constant", pointLights[i].constant);
+        setFloat("pointLights[" + std::to_string(i) + "].linear", pointLights[i].linear);
+        setFloat("pointLights[" + std::to_string(i) + "].quadratic", pointLights[i].quadratic);
+    }
 }
 
 std::string Shader::readShaderFile(const std::string &filePath)
