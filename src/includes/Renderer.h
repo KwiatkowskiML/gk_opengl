@@ -47,7 +47,7 @@ class Renderer
     // Rendering and execution
     //-----------------------------------------------------------------------------------
     void run();
-    void render(Shader& gShader, Shader& lightningPassShader, Shader& skyboxShader);
+    void render(Shader& gShader, Shader& lightningPassShader, Shader& skyboxShader, float deltaTime);
 
     //-----------------------------------------------------------------------------------
     // Getters
@@ -84,7 +84,7 @@ class Renderer
     //-----------------------------------------------------------------------------------
     void setupGBuffer();
     void renderQuad();
-    void fillGBuffer(Shader& gShader);
+    void fillGBuffer(Shader& gShader, float deltaTime);
     void setupLightningPass(Shader& lightningPassShader);
     void dispalySkybox(const Shader& skyboxShader, const SkyBox& skybox);
 

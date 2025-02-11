@@ -86,18 +86,18 @@ void Renderer::run()
             flashlightModel->updateFlashLightPosition(deltaTime);
 
         processInput(deltaTime);
-        render(gShader, lightningPassShader, skyboxShader);
+        render(gShader, lightningPassShader, skyboxShader, deltaTime);
         cameraManager.updateCamera(deltaTime);
     }
 }
 
-void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyboxShader)
+void Renderer::render(Shader &gShader, Shader &lightningPassShader, Shader &skyboxShader, float deltaTime)
 {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Fill G-buffer
-    fillGBuffer(gShader);
+    fillGBuffer(gShader, deltaTime);
 
     // Lightning pass
     setupLightningPass(lightningPassShader);
@@ -204,7 +204,7 @@ void Renderer::setupGBuffer()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Renderer::fillGBuffer(Shader &gShader)
+void Renderer::fillGBuffer(Shader &gShader, float deltaTime)
 {
     // Setup matrices
     const glm::mat4 view       = cameraManager.getViewMatrix();
@@ -223,9 +223,14 @@ void Renderer::fillGBuffer(Shader &gShader)
     // Set texture loading
     gShader.setBool("useTexture", true);
 
+    // Rotate the backpack model in time
+    static float backpackAngle = 0.0f;
+    backpackAngle += deltaTime * 50.0f;
+
     // Set the model matrix for the backpack
     model = glm::mat4(1.0f);
     model = glm::translate(model, BACKPACK_POSITION);
+    model = glm::rotate(model, glm::radians(backpackAngle), glm::vec3(0.0f, 1.0f, 0.0f));
     gShader.setMat4("model", model);
 
     // Draw backpack model
