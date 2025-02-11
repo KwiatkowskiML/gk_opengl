@@ -78,6 +78,10 @@ void Shader::setupLightningUniforms(
     setFloat("spotLight.linear", spot_light.linear);
     setFloat("spotLight.quadratic", spot_light.quadratic);
 
+    setVec3("fogProperties.fogColor", FOG_COLOR);
+    setFloat("fogProperties.fogStart", FOG_START);
+    setFloat("fogProperties.fogEnd", FOG_END);
+
     for (int i = 0; i < NR_POINT_LIGHTS; ++i) {
         setVec3("pointLights[" + std::to_string(i) + "].position", pointLights[i].position);
         setVec3("pointLights[" + std::to_string(i) + "].color", pointLights[i].color);

@@ -163,10 +163,19 @@ constexpr float LIGHT_Z_UPPER_BOUND = 10.0f;
 constexpr glm::vec3 FLASHLIGHT_SHIFT(0.09f, -0.1f, -0.3f);
 constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, -1.0f, 2.0f);
 constexpr glm::vec3 FLASHLIGHT_SCALE(0.2f, 0.2f, 0.2f);
+constexpr int NR_POINT_LIGHTS = 10;
 
+//------------------------------------------------------------------------------
+// Object properties
+//------------------------------------------------------------------------------
 constexpr glm::vec3 BACKPACK_POSITION(2.0f, -1.0f, -2.0f);
 constexpr glm::vec3 OBJECT_COLOR(1.0f, 0.5f, 0.31f);
 
-constexpr int NR_POINT_LIGHTS = 16;
+//------------------------------------------------------------------------------
+// Fog properties
+//------------------------------------------------------------------------------
+constexpr glm::vec3 FOG_COLOR(0.7f, 0.7f, 0.7f);
+constexpr float FOG_START = 10.0f;
+constexpr float FOG_END   = 50.0f;
 
 #endif  // CONSTANTS_H

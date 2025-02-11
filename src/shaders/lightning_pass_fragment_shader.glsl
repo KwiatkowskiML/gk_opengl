@@ -29,19 +29,25 @@ struct SpotLight {
     float outerCutOff;
 };
 
-
 struct PhongProperties{
     float ambientStrength;
     float specularStrength;
     float shininess;
 };
 
-#define MAX_POINT_LIGHTS 16
+struct FogProperties{
+    float fogStart;
+    float fogEnd;
+    vec3 fogColor;
+};
+
+#define MAX_POINT_LIGHTS 10
 uniform Light pointLights[MAX_POINT_LIGHTS];
 
 uniform Light light;
 uniform SpotLight spotLight;
 uniform PhongProperties phongProperties;
+uniform FogProperties fogProperties;
 uniform mat4 view;
 
 vec3 CalcPointLight(Light light);
@@ -56,7 +62,16 @@ void main()
     for(int i = 0; i < MAX_POINT_LIGHTS; i++)
         result += CalcPointLight(pointLights[i]);
 
-    FragColor = vec4(result + spotLightning + pointLightning, 1.0);
+    // fog
+    vec3 lighting = result + pointLightning + spotLightning;
+
+    vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    float distance = length(FragPos);
+
+    float fogFactor = clamp((fogProperties.fogEnd - distance) / (fogProperties.fogEnd - fogProperties.fogStart), 0.0, 1.0);
+    vec3 finalColor = mix(fogProperties.fogColor, lighting, fogFactor);
+
+    FragColor = vec4(finalColor, 1.0);
 }
 
 vec3 CalcPointLight(Light light)
