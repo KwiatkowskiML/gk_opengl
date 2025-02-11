@@ -8,9 +8,11 @@
 #include <string>
 #include <vector>
 
+//------------------------------------------------------------------------------
+// Shader paths
+//------------------------------------------------------------------------------
 const std::string PATH_PREFIX = "../../";
 
-// TODO: fix paths
 const std::string GBUFFER_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/gbuffer_vertex_shader.glsl";
 const std::string GBUFFER_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/gbuffer_fragment_shader.glsl";
 
@@ -20,11 +22,17 @@ const std::string LIGHTNING_PASS_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shade
 const std::string SKYBOX_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/skybox_vertex_shader.glsl";
 const std::string SKYBOX_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/skybox_fragment_shader.glsl";
 
+//------------------------------------------------------------------------------
+// Model paths
+//------------------------------------------------------------------------------
 const std::string BACKPACK_MODEL_PATH   = PATH_PREFIX + "resources/backpack/backpack.obj";
 const std::string FLASHLIGHT_MODEL_PATH = PATH_PREFIX + "resources/flashlight/Flashlight.obj";
 const std::string ITALY_MODEL_PATH =
     PATH_PREFIX + "resources/map/counter-strike-italy-classic-cs-map-in-3d/source/cs_italy/cs_italy.obj";
 
+//------------------------------------------------------------------------------
+// Skybox maps
+//------------------------------------------------------------------------------
 const std::vector<std::string> DAY_SKYBOX_FACES = {
     PATH_PREFIX + "resources/cubemaps/skybox/right.jpg", PATH_PREFIX + "resources/cubemaps/skybox/left.jpg",
     PATH_PREFIX + "resources/cubemaps/skybox/top.jpg",   PATH_PREFIX + "resources/cubemaps/skybox/bottom.jpg",
@@ -37,6 +45,9 @@ const std::vector<std::string> NIGHT_SKYBOX_FACES = {
     PATH_PREFIX + "resources/cubemaps/night/nightFront.png", PATH_PREFIX + "resources/cubemaps/night/nightBack.png"
 };
 
+//------------------------------------------------------------------------------
+// Cube and pyramid vertices
+//------------------------------------------------------------------------------
 constexpr float cubeVertices[] = {
     // positions          // normal vectors
     -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f,
@@ -95,6 +106,9 @@ constexpr float pyramidVertices[] = {
     0.0f, 0.75f, 0.0f, -0.707f, 0.707f, 0.0f    // apex
 };
 
+//------------------------------------------------------------------------------
+// Skybox vertices
+//------------------------------------------------------------------------------
 const std::vector<float> skyboxVertices = {
     // positions
     -1.0f, 1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  -1.0f, -1.0f,
@@ -116,16 +130,21 @@ const std::vector<float> skyboxVertices = {
     1.0f,  -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,  1.0f,  -1.0f, 1.0f
 };
 
+//------------------------------------------------------------------------------
+// Window properties
+//------------------------------------------------------------------------------
 constexpr int WINDOW_WIDTH  = 800;
 constexpr int WINDOW_HEIGHT = 600;
 
+//------------------------------------------------------------------------------
+// Sphere properties
+//------------------------------------------------------------------------------
 constexpr unsigned int SPHERE_SECTORS = 36;  // longitude
 constexpr unsigned int SPHERE_STACKS  = 18;  // latitude
 
-constexpr float BASIC_AMBIENT_STRENGTH  = 0.1f;
-constexpr float BASIC_SPECULAR_STRENGTH = 0.5f;
-constexpr float BASIC_SHININESS         = 32.0f;
-
+//------------------------------------------------------------------------------
+// Camera properties
+//------------------------------------------------------------------------------
 constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
@@ -139,6 +158,10 @@ constexpr glm::vec3 LIGHT_COLOR(1.0f, 1.0f, 1.0f);
 constexpr float LIGHT_CONSTANT  = 1.0f;
 constexpr float LIGHT_LINEAR    = 0.09f;
 constexpr float LIGHT_QUADRATIC = 0.032f;
+
+constexpr float BASIC_AMBIENT_STRENGTH  = 0.1f;
+constexpr float BASIC_SPECULAR_STRENGTH = 0.5f;
+constexpr float BASIC_SHININESS         = 32.0f;
 
 constexpr float LIGHT_X_LOWER_BOUND = -20.0f;
 constexpr float LIGHT_X_UPPER_BOUND = 20.0f;

@@ -20,25 +20,7 @@ class Flashlight : public NewModel
     //-----------------------------------------------------------------------------------
     // Constructor
     //-----------------------------------------------------------------------------------
-    Flashlight(string const &path, unsigned int flags)
-        : NewModel(path, flags),
-          position(INITIAL_FLASHLIGHT_POSITION),
-          initialPosition(INITIAL_FLASHLIGHT_POSITION),
-          rotation(glm::vec3(0.0f, 0.0f, 0.0f))
-    {
-        movementTime = 0.0f;
-
-        spotLight.position = INITIAL_FLASHLIGHT_POSITION;
-        spotLight.color    = glm::vec3(1.0f, 1.0f, 1.0f);
-
-        spotLight.constant  = 1.0f;
-        spotLight.linear    = 0.09f;
-        spotLight.quadratic = 0.032f;
-
-        spotLight.direction   = glm::vec3(0.0f, 0.0f, -1.0f);
-        spotLight.cutOff      = glm::cos(glm::radians(12.5f));
-        spotLight.outerCutOff = glm::cos(glm::radians(15.0f));
-    }
+    Flashlight(string const &path, unsigned int flags);
 
     //-----------------------------------------------------------------------------------
     // Draw the flashlight model
@@ -48,25 +30,7 @@ class Flashlight : public NewModel
     //-----------------------------------------------------------------------------------
     // Getters
     //-----------------------------------------------------------------------------------
-    glm::mat4 getModelMatrix() const
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-
-        // Translate the model to the flashlight position
-        model = glm::translate(model, position);
-
-        // Rotate the model to face the same direction as the camera
-        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        // Apply y and x rotations
-        model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        // scale the model
-        model = glm::scale(model, FLASHLIGHT_SCALE);
-        return model;
-    }
-
+    glm::mat4 getModelMatrix() const;
     glm::vec3 getPosition() const { return position; }
     glm::vec3 getRotation() const { return rotation; }
 
@@ -88,61 +52,18 @@ class Flashlight : public NewModel
     //-----------------------------------------------------------------------------------
     // Update the flashlight position
     //-----------------------------------------------------------------------------------
-    void updateFlashLightPosition(const float &deltaTime)
-    {
-        if (!shouldMove)
-            return;
-
-        // Update movement time
-        movementTime += deltaTime;
-
-        // Calculate the new z offset
-        float speedFactor       = 0.5f;
-        float movementAmplitude = 2.0f;
-        float zOffset           = sin(movementTime * speedFactor) * movementAmplitude;
-
-        // Calculate the rotation
-        float rotationAmplitude = 25.0f;
-        float yRotation         = rotationAmplitude * sin(movementTime);
-        float xRotation         = rotationAmplitude * cos(movementTime);
-
-        // Setup new position and rotation
-        glm::vec3 newPosition = initialPosition;
-        newPosition.z += zOffset;
-        setPosition(newPosition);
-
-        glm::vec3 newRotation = rotation;
-        newRotation.y         = yRotation;
-        newRotation.x         = xRotation;
-        setRotation(newRotation);
-    }
+    void updateFlashLightPosition(const float &deltaTime);
 
     private:
     //-----------------------------------------------------------------------------------
-    // Private functions
+    // Private members
     //-----------------------------------------------------------------------------------
     glm::vec3 position;
     glm::vec3 rotation;
     float movementTime;
     glm::vec3 initialPosition;
 
-    void updateSpotLightDirection()
-    {
-        // Start with base direction
-        glm::vec3 baseDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-
-        // Create rotation matrices
-        glm::mat4 rotationMatrix = glm::mat4(1.0f);
-
-        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        // Transform the base direction by the rotation matrix
-        glm::vec4 rotatedDirection = rotationMatrix * glm::vec4(baseDirection, 0.0f);
-
-        // Update spotlight direction
-        spotLight.direction = glm::normalize(glm::vec3(rotatedDirection));
-    }
+    void updateSpotLightDirection();
 };
 
 #endif  // FLASHLIGHT_H
