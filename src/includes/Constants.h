@@ -133,8 +133,8 @@ const std::vector<float> skyboxVertices = {
 //------------------------------------------------------------------------------
 // Window properties
 //------------------------------------------------------------------------------
-constexpr int WINDOW_WIDTH  = 800;
-constexpr int WINDOW_HEIGHT = 600;
+constexpr int WINDOW_WIDTH  = 1400;
+constexpr int WINDOW_HEIGHT = 800;
 
 //------------------------------------------------------------------------------
 // Sphere properties

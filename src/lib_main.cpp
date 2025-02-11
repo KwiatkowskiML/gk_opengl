@@ -3,7 +3,7 @@
 extern int LibMain()
 {
     try {
-        Renderer renderer(800, 600);
+        Renderer renderer(WINDOW_WIDTH, WINDOW_HEIGHT);
         renderer.run();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

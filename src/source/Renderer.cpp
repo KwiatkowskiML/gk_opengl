@@ -36,8 +36,6 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     setupPointLights();
 
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
-    // flashlightModel =
-    //     new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
 
     // Setup G-buffer
     setupGBuffer();
