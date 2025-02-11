@@ -8,46 +8,33 @@
 #include <string>
 #include <vector>
 
+const std::string PATH_PREFIX = "../../";
+
 // TODO: fix paths
-const std::string GBUFFER_VERTEX_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/gbuffer_vertex_shader.glsl";
-const std::string GBUFFER_FRAGMENT_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/gbuffer_fragment_shader.glsl";
+const std::string GBUFFER_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/gbuffer_vertex_shader.glsl";
+const std::string GBUFFER_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/gbuffer_fragment_shader.glsl";
 
-const std::string LIGHTNING_PASS_VERTEX_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_pass_vertex_shader.glsl";
-const std::string LIGHTNING_PASS_FRAGMENT_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/lightning_pass_fragment_shader.glsl";
+const std::string LIGHTNING_PASS_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/lightning_pass_vertex_shader.glsl";
+const std::string LIGHTNING_PASS_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/lightning_pass_fragment_shader.glsl";
 
-const std::string SKYBOX_VERTEX_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/skybox_vertex_shader.glsl";
-const std::string SKYBOX_FRAGMENT_SHADER_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/src/shaders/skybox_fragment_shader.glsl";
+const std::string SKYBOX_VERTEX_SHADER_PATH   = PATH_PREFIX + "src/shaders/skybox_vertex_shader.glsl";
+const std::string SKYBOX_FRAGMENT_SHADER_PATH = PATH_PREFIX + "src/shaders/skybox_fragment_shader.glsl";
 
-const std::string BACKPACK_MODEL_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack/backpack.obj";
-const std::string FLASHLIGHT_MODEL_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/flashlight/Flashlight.obj";
+const std::string BACKPACK_MODEL_PATH   = PATH_PREFIX + "resources/backpack/backpack.obj";
+const std::string FLASHLIGHT_MODEL_PATH = PATH_PREFIX + "resources/flashlight/Flashlight.obj";
 const std::string ITALY_MODEL_PATH =
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/map/counter-strike-italy-classic-cs-map-in-3d/source/"
-    "cs_italy/cs_italy.obj";
+    PATH_PREFIX + "resources/map/counter-strike-italy-classic-cs-map-in-3d/source/cs_italy/cs_italy.obj";
 
 const std::vector<std::string> DAY_SKYBOX_FACES = {
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/right.jpg",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/left.jpg",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/top.jpg",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/bottom.jpg",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/front.jpg",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/back.jpg"
+    PATH_PREFIX + "resources/cubemaps/skybox/right.jpg", PATH_PREFIX + "resources/cubemaps/skybox/left.jpg",
+    PATH_PREFIX + "resources/cubemaps/skybox/top.jpg",   PATH_PREFIX + "resources/cubemaps/skybox/bottom.jpg",
+    PATH_PREFIX + "resources/cubemaps/skybox/front.jpg", PATH_PREFIX + "resources/cubemaps/skybox/back.jpg"
 };
 
 const std::vector<std::string> NIGHT_SKYBOX_FACES = {
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightRight.png",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightLeft.png",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightTop.png",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightBottom.png",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightFront.png",
-    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/night/nightBack.png"
+    PATH_PREFIX + "resources/cubemaps/night/nightRight.png", PATH_PREFIX + "resources/cubemaps/night/nightLeft.png",
+    PATH_PREFIX + "resources/cubemaps/night/nightTop.png",   PATH_PREFIX + "resources/cubemaps/night/nightBottom.png",
+    PATH_PREFIX + "resources/cubemaps/night/nightFront.png", PATH_PREFIX + "resources/cubemaps/night/nightBack.png"
 };
 
 constexpr float cubeVertices[] = {
