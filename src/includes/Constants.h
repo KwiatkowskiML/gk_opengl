@@ -28,6 +28,9 @@ const std::string BACKPACK_MODEL_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/backpack/backpack.obj";
 const std::string FLASHLIGHT_MODEL_PATH =
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/flashlight/Flashlight.obj";
+const std::string ITALY_MODEL_PATH =
+    "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/map/counter-strike-italy-classic-cs-map-in-3d/source/"
+    "cs_italy/cs_italy.obj";
 
 const std::vector<std::string> DAY_SKYBOX_FACES = {
     "/home/michal/studia/sem5/gk/gk_open_gl2/gk_opengl/resources/cubemaps/skybox/right.jpg",
@@ -140,12 +143,12 @@ constexpr glm::vec3 INITIAL_FPS_CAMERA_POSITION(0.0f, 0.0f, 3.0f);
 constexpr glm::vec3 INITIAL_CONSTANT_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 INITIAL_CIRCULAR_CAMERA_POSITION(0.0f, 5.0f, 10.0f);
 constexpr glm::vec3 CAMERA_TARGET_POSITION(0.0f, 0.0f, 0.0f);
-constexpr glm::vec3 LIGHT_POS(5.0f, 5.0f, 5.0f);
+constexpr glm::vec3 LIGHT_POS(2.0f, 2.0f, 2.0f);
 
-constexpr glm::vec3 BACKPACK_POSITION(2.0f, 2.0f, -2.0f);
+constexpr glm::vec3 BACKPACK_POSITION(2.0f, -1.0f, -2.0f);
 
 constexpr glm::vec3 FLASHLIGHT_SHIFT(0.09f, -0.1f, -0.3f);
-constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, 2.0f, 1.0f);
+constexpr glm::vec3 INITIAL_FLASHLIGHT_POSITION(2.0f, -1.0f, 1.0f);
 constexpr glm::vec3 FLASHLIGHT_SCALE(0.2f, 0.2f, 0.2f);
 
 constexpr glm::vec3 OBJECT_COLOR(1.0f, 0.5f, 0.31f);

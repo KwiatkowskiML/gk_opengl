@@ -49,6 +49,7 @@ void main()
     vec3 pointLightning = CalcPointLight(light);
     vec3 spotLightning = CalcSpotLight(spotLight);
     FragColor = vec4(pointLightning + spotLightning, 1.0);
+    //FragColor = vec4(texture(gAlbedoSpec, TexCoords).rgb, 1.0);
 }
 
 vec3 CalcPointLight(Light light)

@@ -28,6 +28,7 @@ Renderer::Renderer(unsigned int width, unsigned int height)
       windowWidth(width),
       windowHeight(height),
       backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
+      italyMap(std::filesystem::path(ITALY_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate),
       skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices)
 {
     setupLightSource();
@@ -229,6 +230,14 @@ void Renderer::fillGBuffer(Shader &gShader)
 
     // Draw backpack model
     backpackModel.Draw(gShader);
+
+    // Draw the map of Italy
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(15.0f, 0.0f, -35.0f));
+    model = glm::scale(model, glm::vec3(0.02f));  // Adjust the scale factor as needed.
+    model = glm::rotate(model, glm::radians(270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    gShader.setMat4("model", model);
+    italyMap.Draw(gShader);
 
     model = flashlightModel->getModelMatrix();
     gShader.setMat4("model", model);

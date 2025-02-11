@@ -66,6 +66,7 @@ class Renderer
     unsigned int windowWidth, windowHeight;
     std::vector<InternalModel> models;
     NewModel backpackModel;
+    NewModel italyMap;
     SkyBoxManager skyboxManager;
 
     // G-buffer
