@@ -28,7 +28,7 @@ ImguiMenu::~ImguiMenu()
 }
 void ImguiMenu::DisplayMenu(
     CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyBoxManager,
-    Flashlight *flashlight
+    const std::unique_ptr<Flashlight> &flashlight
 )
 {
     // Start ImGui frame

@@ -34,7 +34,6 @@
 class Renderer
 {
     public:
-    Flashlight* flashlightModel;
     std::unique_ptr<ImguiMenu> imguiMenu;
 
     //-----------------------------------------------------------------------------------
@@ -59,16 +58,23 @@ class Renderer
     //-----------------------------------------------------------------------------------
     // Private members
     //-----------------------------------------------------------------------------------
+    unsigned int windowWidth, windowHeight;
+
+    // Utility managers
     std::unique_ptr<WindowManager> windowManager;
     CameraManager cameraManager;
     ProjectionManager projectionManager;
-    LightSource lightSource;
-    unsigned int windowWidth, windowHeight;
+
+    // Models
     std::vector<InternalModel> models;
     NewModel backpackModel;
     NewModel italyMap;
     SkyBoxManager skyboxManager;
+    std::unique_ptr<Flashlight> flashlightModel;
+
+    // Lights
     std::vector<LightSource> pointLights;
+    LightSource lightSource;
 
     // G-buffer
     unsigned int gBuffer;

@@ -19,25 +19,25 @@ Renderer::~Renderer()
         glDeleteBuffers(1, &model.VBO);
     }
     glfwTerminate();
-    delete flashlightModel;
 }
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : windowManager(std::make_unique<WindowManager>(width, height)),
-      projectionManager(width, height, cameraManager.getZoom()),
-      windowWidth(width),
+    : windowWidth(width),
       windowHeight(height),
+      windowManager(std::make_unique<WindowManager>(width, height)),
+      projectionManager(width, height, cameraManager.getZoom()),
       backpackModel(std::filesystem::path(BACKPACK_MODEL_PATH)),
       italyMap(std::filesystem::path(ITALY_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate),
       skyboxManager(DAY_SKYBOX_FACES, NIGHT_SKYBOX_FACES, skyboxVertices),
+      flashlightModel(std::make_unique<Flashlight>(FLASHLIGHT_MODEL_PATH, aiProcess_FlipUVs | aiProcess_Triangulate)),
       pointLights(NR_POINT_LIGHTS)
 {
     setupLightSource();
     setupPointLights();
 
     glfwSetWindowUserPointer(windowManager->getWindow(), this);
-    flashlightModel =
-        new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
+    // flashlightModel =
+    //     new Flashlight(std::filesystem::path(FLASHLIGHT_MODEL_PATH), aiProcess_FlipUVs | aiProcess_Triangulate);
 
     // Setup G-buffer
     setupGBuffer();

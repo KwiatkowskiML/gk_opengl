@@ -29,7 +29,7 @@ class ImguiMenu
     //-------------------------------------------------------------------------
     void DisplayMenu(
         CameraManager &cameraManager, ProjectionManager &projectionManager, SkyBoxManager &skyboxManager,
-        Flashlight *flashlightModel
+        const std::unique_ptr<Flashlight> &flashlightModel
     );
 
     //-------------------------------------------------------------------------
