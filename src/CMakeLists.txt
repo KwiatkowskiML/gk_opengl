@@ -70,3 +70,29 @@ add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${PROJECT_SOURCE_DIR}/src/shaders ${PROJECT_BINARY_DIR}/src/shaders
     COMMENT "Copying models")
+
+if(WIN32)
+    # Copy GLFW DLL
+    add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:glfw>"
+            "$<TARGET_FILE_DIR:${EXEC_NAME}>"
+        COMMENT "Copying glfw DLL"
+    )
+
+    # Copy Assimp DLL
+    add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:assimp>"
+            "$<TARGET_FILE_DIR:${EXEC_NAME}>"
+        COMMENT "Copying assimp DLL"
+    )
+
+    # Copy Glad DLL (if it is built as a shared library)
+    add_custom_command(TARGET ${EXEC_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "$<TARGET_FILE:glad>"
+            "$<TARGET_FILE_DIR:${EXEC_NAME}>"
+        COMMENT "Copying glad DLL"
+    )
+endif()
